@@ -1,0 +1,44 @@
+=== ARTICLE ===
+ID: SYN-001
+TITLE: SYNTHETIC: Alder Systems announces a test product
+SOURCE: Synthetic Wire
+URL: https://example.invalid/synthetic/aldr-product
+PUBLISHED_AT: 2026-10-07T09:00:00-04:00
+TICKERS: ALDR
+IS_HEADLINE: true
+CONTENT:
+Synthetic fixture only. Alder Systems announced a test product for this project.
+=== END ===
+=== ARTICLE ===
+ID: SYN-002
+TITLE: SYNTHETIC: Alder Systems announces a test product
+SOURCE: Synthetic Mirror
+URL: https://example.invalid/synthetic/aldr-product-copy
+PUBLISHED_AT: 2026-10-07T09:05:00-04:00
+TICKERS: ALDR
+IS_HEADLINE: unknown
+CONTENT:
+Synthetic fixture only. Alder Systems announced a test product for this project.
+=== END ===
+=== ARTICLE ===
+ID: SYN-003
+TITLE: SYNTHETIC: Birch Labs reports a test milestone
+SOURCE: Synthetic Wire
+URL: https://example.invalid/synthetic/brch-milestone
+PUBLISHED_AT: 2026-10-02T08:00:00-04:00
+TICKERS: BRCH
+IS_HEADLINE: false
+CONTENT:
+Synthetic fixture only. Birch Labs reported a made-up milestone.
+=== END ===
+=== ARTICLE ===
+ID: SYN-004
+TITLE: SYNTHETIC: Old Alder item
+SOURCE: Synthetic Wire
+URL: https://example.invalid/synthetic/aldr-old
+PUBLISHED_AT: 2026-09-29T08:00:00-04:00
+TICKERS: ALDR
+IS_HEADLINE: false
+CONTENT:
+Synthetic fixture only. This item is outside the current seven-day window.
+=== END ===

@@ -4,14 +4,15 @@ This repository's current executable scope is **Agent 1 data integration and hot
 
 ## Quick start
 
-Python 3.11+ is sufficient for ingestion and ranking. Supply files that match the contracts below:
+Python 3.11+ is sufficient for ingestion, ranking, and tests. The checked-in files under `data/samples/` are synthetic:
 
 ```powershell
-python main.py ingest --news path/to/news.txt --market path/to/market_data.csv --retrieved-at ACTUAL_RETRIEVAL_TIME_WITH_OFFSET
-python main.py rank --as-of CUTOFF_TIME_WITH_OFFSET --top-k 10 --output outputs/ranking.json
+python -m unittest discover -s tests -v
+python main.py ingest --news data/samples/news.txt --market data/samples/market_data.csv --retrieved-at 2026-10-08T08:00:00-04:00
+python main.py rank --as-of 2026-10-08T09:00:00-04:00 --top-k 10 --output outputs/sample-ranking.json
 ```
 
-The synthetic sample files and tests are local development assets and are ignored by Git. If they are present locally, run `python -m unittest discover -s tests -v` and point the ingest command at `data/samples/news.txt` and `data/samples/market_data.csv`. Set `--db path/to/file.sqlite3` before the subcommand to use another database. The default is `data/agent1.sqlite3`. Delete or archive that file to reset local data; it is ignored by Git. The ranked JSON is saved in SQLite as an immutable run and optionally exported to `--output`.
+The sample contains two synthetic tickers, so the result has two rows. For real data, replace the sample paths and provide the actual retrieval and cutoff times. Set `--db path/to/file.sqlite3` before the subcommand to use another database. The default is `data/agent1.sqlite3`. Delete or archive that file to reset local data; it is ignored by Git. The ranked JSON is saved in SQLite as an immutable run and optionally exported to `--output`.
 
 ## Input contracts
 
