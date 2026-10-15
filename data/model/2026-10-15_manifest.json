@@ -1,0 +1,42 @@
+{
+  "usage": "the splits overlap and are alternatives; feed exactly one of them to the model",
+  "window_unit": "trading days: dates on which at least one requested ticker has a bar",
+  "universe": "tickers with a bar on every trading day of the download; the rest are excluded",
+  "retrieved_at": "2026-10-15T19:56:34Z",
+  "source_name": "yfinance",
+  "source": "Yahoo Finance via yfinance 1.7.0 (download, auto_adjust=False)",
+  "adjustment": "split-adjusted by Yahoo; not dividend-adjusted (Close, not Adj Close)",
+  "timeframe": "1Day",
+  "session": "regular",
+  "parent_csv": "data/research/2026-10-15_past_240_days.csv",
+  "parent_csv_sha256": "9bf757d742156b881d52eb76a07625bc6072f4c5ceb53196977a32330dede491",
+  "splits": [
+    {
+      "window_trading_days": 30,
+      "csv_file": "2026-10-15_past_30_days.csv",
+      "csv_sha256": "376697ed22762864775a6decd85c1366f4863b8cb4fc874739a0c2ee9747e0a2",
+      "first_bar_date": "2026-09-02",
+      "last_bar_date": "2026-10-14",
+      "rows": 15000,
+      "tickers": 500
+    },
+    {
+      "window_trading_days": 15,
+      "csv_file": "2026-10-15_past_15_days.csv",
+      "csv_sha256": "a12283c49a399834cff73ff602ab84d352ee12e25f430a8538bbfb4cde7b5f67",
+      "first_bar_date": "2026-09-24",
+      "last_bar_date": "2026-10-14",
+      "rows": 7500,
+      "tickers": 500
+    },
+    {
+      "window_trading_days": 7,
+      "csv_file": "2026-10-15_past_7_days.csv",
+      "csv_sha256": "387ad3a2304299078ccd3f611f9104f29fbe83a401527bc40d7f6ae497e6ba0b",
+      "first_bar_date": "2026-10-06",
+      "last_bar_date": "2026-10-14",
+      "rows": 3500,
+      "tickers": 500
+    }
+  ]
+}
