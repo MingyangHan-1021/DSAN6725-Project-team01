@@ -1,0 +1,95 @@
+=== ARTICLE ===
+ID: NEWS-20261014-DELL-CNBC-001
+TITLE: Dell stock plunges 11%, leading data center sell-off as fears mount about 'enterprise AI timing'
+SOURCE: CNBC
+URL: https://www.cnbc.com/2026/10/14/dell-stock-data-center-ai.html
+PUBLISHED_AT: 2026-10-14T20:06:38+00:00
+TICKERS: DELL, HPE, NTAP, ORCL
+IS_HEADLINE: unknown
+CONTENT:
+CNBC reported that Dell shares fell about 11% after Barclays downgraded Dell, Hewlett Packard Enterprise, and NetApp over concerns about the timing of enterprise AI adoption. The report said the sell-off spread across data-center infrastructure names, while investors questioned how much recent hardware revenue reflected durable AI demand rather than high memory prices. Oracle was also identified as part of the broader decline.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-DELL-MW-001
+TITLE: Why Dell's stock was one of the S&P 500's biggest laggards on Wednesday
+SOURCE: MarketWatch
+URL: https://www.marketwatch.com/story/why-dells-stock-was-one-of-the-s-p-500s-biggest-laggards-on-wednesday
+PUBLISHED_AT: 2026-10-14T20:21:00+00:00
+TICKERS: DELL, HPE
+IS_HEADLINE: unknown
+CONTENT:
+MarketWatch reported that Dell was among the S&P 500's largest decliners after an analyst argued that Dell and Hewlett Packard Enterprise had limited room to extend their rallies. The report highlighted the possibility that changing memory-component prices could weaken current revenue momentum and added to concern about the durability of enterprise AI hardware demand.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-ORCL-YF-001
+TITLE: Open Cloud Security And Testing Partnerships Could Be A Game Changer For Oracle (ORCL)
+SOURCE: Yahoo Finance / Simply Wall St
+URL: https://finance.yahoo.com/technology/articles/open-cloud-security-testing-partnerships-191549438.html
+PUBLISHED_AT: 2026-10-14T19:15:49+00:00
+TICKERS: ORCL, MRVL, MSFT, PATH
+IS_HEADLINE: unknown
+CONTENT:
+The report discussed Oracle's participation with Marvell and Microsoft in an Open Compute Project working group for cloud hardware security standards, along with the availability of UiPath Test Cloud through Oracle Marketplace. It described these partnerships as potentially strengthening Oracle Cloud Infrastructure's ecosystem, while noting that Oracle's heavy AI capital spending and conversion of backlog into revenue remain important uncertainties.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-VRT-PRN-001
+TITLE: Vertiv Helps Enterprises Move from AI Pilots to Production
+SOURCE: PR Newswire
+URL: https://www.prnewswire.com/news-releases/vertiv-helps-enterprises-move-from-ai-pilots-to-production-302907415.html
+PUBLISHED_AT: 2026-10-14T08:30:00-04:00
+TICKERS: VRT
+IS_HEADLINE: unknown
+CONTENT:
+Vertiv released an enterprise AI infrastructure planning guide developed with STL Partners. The announcement focused on helping organizations move AI workloads from pilot projects into production by planning power, cooling, deployment, and operating requirements. The item is a company-issued press release distributed by PR Newswire.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-VRT-PRN-002
+TITLE: Vertiv Announces Date of Third Quarter 2026 Earnings Release and Conference Call
+SOURCE: PR Newswire
+URL: https://www.prnewswire.com/news-releases/vertiv-announces-date-of-third-quarter-2026-earnings-release-and-conference-call-302907659.html
+PUBLISHED_AT: 2026-10-14T08:00:00-04:00
+TICKERS: VRT
+IS_HEADLINE: unknown
+CONTENT:
+Vertiv announced that it would release third-quarter 2026 financial results before the market opened on October 28, followed by a management conference call. The scheduled report is a near-term catalyst for investors monitoring demand for data-center power and cooling infrastructure. The item is a company-issued press release distributed by PR Newswire.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-HOOD-INV-001
+TITLE: Why is Robinhood Markets stock sliding today?
+SOURCE: Investing.com
+URL: https://ca.investing.com/news/stock-market-news/why-is-robinhood-markets-stock-sliding-today-93CH-4881087
+PUBLISHED_AT: 2026-10-14T10:46:00-04:00
+TICKERS: HOOD
+IS_HEADLINE: unknown
+CONTENT:
+Investing.com attributed Robinhood's decline to analyst caution, including a Wolfe Research downgrade and a Wells Fargo price-target reduction. The report also cited a risk-off broader market, the stock's elevated valuation, and uncertainty before Robinhood's scheduled third-quarter results on October 27. The publisher states that the article was produced with AI support and reviewed by an editor.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-GEV-INV-001
+TITLE: Why is GE Vernova stock sliding today?
+SOURCE: Investing.com
+URL: https://ca.investing.com/news/stock-market-news/why-is-ge-vernova-stock-sliding-today-93CH-4881084
+PUBLISHED_AT: 2026-10-14T10:44:00-04:00
+TICKERS: GEV
+IS_HEADLINE: unknown
+CONTENT:
+Investing.com reported that GE Vernova shares fell after Susquehanna reduced its price target while retaining a positive rating. The report said an earlier JPMorgan target reduction, valuation concerns, and caution before the company's October 28 third-quarter results also weighed on sentiment. The publisher states that the article was produced with AI support and reviewed by an editor.
+=== END ===
+
+=== ARTICLE ===
+ID: NEWS-20261014-BE-INV-001
+TITLE: Why is Bloom Energy stock sliding today?
+SOURCE: Investing.com
+URL: https://uk.investing.com/news/stock-market-news/why-is-bloom-energy-stock-sliding-today-93CH-4910445
+PUBLISHED_AT: 2026-10-14T15:26:00+01:00
+TICKERS: BE
+IS_HEADLINE: unknown
+CONTENT:
+Investing.com linked Bloom Energy's decline to a hotter-than-expected inflation report, higher Treasury yields, and sensitivity to financing conditions after the stock's strong 2026 advance. It also noted a recent Roth/MKM price-target increase that retained a neutral rating and investor caution before Bloom Energy's October 22 earnings report. The publisher states that the article was produced with AI support and reviewed by an editor.
+=== END ===

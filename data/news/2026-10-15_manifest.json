@@ -1,0 +1,35 @@
+{
+  "news_file": "2026-10-15_news.txt",
+  "retrieved_at": "2026-10-15T22:31:27Z",
+  "window_start": "2026-10-08T22:31:27Z",
+  "window_end": "2026-10-15T22:31:27Z",
+  "selection_method": "Curated recent coverage for market-movement candidates from the 2026-10-15 S&P 500 market snapshot; publication times were cross-checked against publisher pages or Google News RSS.",
+  "article_count": 8,
+  "sources": [
+    "CNBC",
+    "Investing.com",
+    "MarketWatch",
+    "PR Newswire",
+    "Yahoo Finance / Simply Wall St"
+  ],
+  "tickers_covered": [
+    "BE",
+    "DELL",
+    "GEV",
+    "HOOD",
+    "HPE",
+    "MRVL",
+    "MSFT",
+    "NTAP",
+    "ORCL",
+    "PATH",
+    "VRT"
+  ],
+  "notes": [
+    "CONTENT fields are original factual summaries, not copied article text.",
+    "IS_HEADLINE is unknown because homepage placement was not independently verified.",
+    "Investing.com display times were recorded with the regional timezone shown by the accessed edition.",
+    "SKYD was not assigned Skyward Specialty coverage because public results identified that company as SKWD; the ticker mapping needs verification before ingestion of related news.",
+    "This is a focused prototype sample, not complete coverage of all 500 market-data tickers."
+  ]
+}
