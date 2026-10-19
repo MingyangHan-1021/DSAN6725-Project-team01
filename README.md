@@ -16,7 +16,7 @@ The sample contains two synthetic tickers, so the result has two rows. For real 
 
 ## Input contracts
 
-News consists of records delimited by `=== ARTICLE ===` and `=== END ===`. Each record needs `ID`, `TITLE`, `SOURCE`, `URL`, `PUBLISHED_AT`, `TICKERS`, `IS_HEADLINE`, and a multiline `CONTENT:` body. `PUBLISHED_AT` must have an ISO 8601 timezone offset; `TICKERS` may be empty; `IS_HEADLINE` is exactly `true`, `false`, or `unknown`. `unknown` does not count as verified homepage placement. Article ID is stable and cannot later identify different text, URL, publication time, or tickers.
+News consists of records delimited by `=== ARTICLE ===` and `=== END ===`. Each record needs `ID`, `TITLE`, `SOURCE`, `URL`, `PUBLISHED_AT`, `TICKERS`, `IS_HEADLINE`, and a multiline `CONTENT:` body. Newly classified records may also include the paired fields `PRIMARY_TICKER` and `EVENT_TYPE`; legacy records remain valid without them. `PUBLISHED_AT` must have an ISO 8601 timezone offset; `TICKERS` may be empty for legacy records; `IS_HEADLINE` is exactly `true`, `false`, or `unknown`. `unknown` does not count as verified homepage placement. Article ID is stable and cannot later identify different text, URL, publication time, tickers, or classification.
 
 Market CSV columns must be exactly `ticker,timestamp,timeframe,session,open,high,low,close,volume` in that order. Timestamp requires a timezone offset. OHLC must be finite, positive, and internally consistent; volume is a nonnegative integer. `(ticker,timestamp,timeframe,session)` is unique. The baseline ranking uses only `1Day` / `regular` bars. A malformed teammate file fails with a record or line error; no part of that ingest is committed.
 

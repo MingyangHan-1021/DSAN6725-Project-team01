@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS articles (
  article_id TEXT PRIMARY KEY, title TEXT NOT NULL, source TEXT NOT NULL, url TEXT NOT NULL,
  published_at TEXT NOT NULL, retrieved_at TEXT NOT NULL, available_at TEXT NOT NULL,
  is_headline TEXT NOT NULL, content TEXT NOT NULL, raw_text TEXT NOT NULL,
- content_hash TEXT NOT NULL, canonical_key TEXT NOT NULL
+ content_hash TEXT NOT NULL, canonical_key TEXT NOT NULL,
+ primary_ticker TEXT, event_type TEXT
 );
 CREATE TABLE IF NOT EXISTS article_tickers (
  article_id TEXT NOT NULL REFERENCES articles(article_id), ticker TEXT NOT NULL,
@@ -37,6 +38,13 @@ def connect(path: str | Path) -> sqlite3.Connection:
     db = sqlite3.connect(path)
     db.row_factory = sqlite3.Row
     db.executescript(SCHEMA)
+    # Additive migration for databases created before news classification fields existed.
+    article_columns = {row[1] for row in db.execute("PRAGMA table_info(articles)")}
+    if "primary_ticker" not in article_columns:
+        db.execute("ALTER TABLE articles ADD COLUMN primary_ticker TEXT")
+    if "event_type" not in article_columns:
+        db.execute("ALTER TABLE articles ADD COLUMN event_type TEXT")
+    db.commit()
     return db
 
 def ingest(db: sqlite3.Connection, articles: list[Article], bars: list[Bar], retrieved_at: datetime) -> dict:
@@ -54,12 +62,23 @@ def ingest(db: sqlite3.Connection, articles: list[Article], bars: list[Bar], ret
                 previous = {row[0] for row in db.execute("SELECT ticker FROM article_tickers WHERE article_id=?", (article.article_id,))}
                 if previous != set(article.tickers):
                     raise DataError(f"article ID {article.article_id} has changed tickers")
+                stored_classification = (existing["primary_ticker"], existing["event_type"])
+                new_classification = (article.primary_ticker, article.event_type)
+                if stored_classification == (None, None) and new_classification != (None, None):
+                    db.execute("UPDATE articles SET primary_ticker=?,event_type=? WHERE article_id=?",
+                               new_classification + (article.article_id,))
+                elif new_classification != (None, None) and stored_classification != new_classification:
+                    raise DataError(f"article ID {article.article_id} has changed classification")
                 continue
-            db.execute("""INSERT INTO articles VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
+            db.execute("""INSERT INTO articles (
+                article_id,title,source,url,published_at,retrieved_at,available_at,is_headline,
+                content,raw_text,content_hash,canonical_key,primary_ticker,event_type
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
                 article.article_id, article.title, article.source, article.url,
                 article.published_at.isoformat(), article.retrieved_at.isoformat(),
                 article.available_at.isoformat(), article.is_headline, article.content,
-                article.raw_text, article.content_hash, article.canonical_key))
+                article.raw_text, article.content_hash, article.canonical_key,
+                article.primary_ticker, article.event_type))
             db.executemany("INSERT INTO article_tickers VALUES (?,?)", ((article.article_id, ticker) for ticker in article.tickers))
         for bar in bars:
             if bar.timestamp > retrieved_at:
