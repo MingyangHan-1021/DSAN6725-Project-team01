@@ -36,8 +36,8 @@ The tickers come from `config/sp500_tickers.txt`: S&P 500 members that traded no
 ## Notes
 
 - **Same-day rerun:** a second run on the same date stops without overwriting. Delete that date's files first to download again.
-- **Ingest into Agent 1:** pass the manifest's `retrieved_at` value, for example:
+- **Ingest into Agent 1:** pass each file's own manifest `retrieved_at` value, for example:
   ```bash
-  python main.py ingest --news <news.txt> --market data/model/<date>_past_7_days.csv --retrieved-at <retrieved_at>
+  python main.py ingest --news <news.txt> --news-retrieved-at <news_retrieved_at> --market data/model/<date>_past_7_days.csv --market-retrieved-at <market_retrieved_at>
   ```
 

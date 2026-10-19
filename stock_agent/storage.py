@@ -2,6 +2,7 @@
 import json
 import sqlite3
 from datetime import datetime, timezone
+from decimal import Decimal
 from pathlib import Path
 from .models import Article, Bar, DataError
 
@@ -39,17 +40,22 @@ def connect(path: str | Path) -> sqlite3.Connection:
     db.executescript(SCHEMA)
     return db
 
-def ingest(db: sqlite3.Connection, articles: list[Article], bars: list[Bar], retrieved_at: datetime) -> dict:
+def ingest(db: sqlite3.Connection, articles: list[Article], bars: list[Bar], market_retrieved_at: datetime) -> dict:
     """Validate conflicts before committing anything; repeat input leaves row counts unchanged."""
-    if retrieved_at.tzinfo is None:
-        raise DataError("retrieved_at requires timezone")
-    retrieved_at = retrieved_at.astimezone(timezone.utc)
+    if market_retrieved_at.tzinfo is None:
+        raise DataError("market_retrieved_at requires timezone")
+    market_retrieved_at = market_retrieved_at.astimezone(timezone.utc)
     with db:
         for article in articles:
             existing = db.execute("SELECT * FROM articles WHERE article_id=?", (article.article_id,)).fetchone()
             if existing:
-                if (existing["content_hash"], existing["url"], existing["published_at"]) != (
-                    article.content_hash, article.url, article.published_at.isoformat()):
+                # A stable ID cannot silently acquire different provenance or headline status.
+                if (existing["title"], existing["source"], existing["url"], existing["published_at"],
+                    existing["is_headline"], existing["content"], existing["raw_text"],
+                    existing["content_hash"], existing["canonical_key"]) != (
+                    article.title, article.source, article.url, article.published_at.isoformat(),
+                    article.is_headline, article.content, article.raw_text,
+                    article.content_hash, article.canonical_key):
                     raise DataError(f"article ID {article.article_id} conflicts with stored evidence")
                 previous = {row[0] for row in db.execute("SELECT ticker FROM article_tickers WHERE article_id=?", (article.article_id,))}
                 if previous != set(article.tickers):
@@ -62,16 +68,17 @@ def ingest(db: sqlite3.Connection, articles: list[Article], bars: list[Bar], ret
                 article.raw_text, article.content_hash, article.canonical_key))
             db.executemany("INSERT INTO article_tickers VALUES (?,?)", ((article.article_id, ticker) for ticker in article.tickers))
         for bar in bars:
-            if bar.timestamp > retrieved_at:
+            if bar.timestamp > market_retrieved_at:
                 raise DataError(f"bar {bar.ticker} timestamp is after its retrieval time")
             key = (bar.ticker, bar.timestamp.isoformat(), bar.timeframe, bar.session)
             values = tuple(str(value) for value in (bar.open, bar.high, bar.low, bar.close)) + (bar.volume,)
             existing = db.execute("SELECT open,high,low,close,volume FROM bars WHERE ticker=? AND timestamp=? AND timeframe=? AND session=?", key).fetchone()
             if existing:
-                if tuple(existing) != values:
+                # CSV formatting such as 10 versus 10.0 does not change an OHLCV bar.
+                if tuple(Decimal(value) for value in existing[:4]) != (bar.open, bar.high, bar.low, bar.close) or existing[4] != bar.volume:
                     raise DataError(f"bar {key} conflicts with stored OHLCV")
                 continue
-            db.execute("INSERT INTO bars VALUES (?,?,?,?,?,?,?,?,?,?)", key + values + (retrieved_at.isoformat(),))
+            db.execute("INSERT INTO bars VALUES (?,?,?,?,?,?,?,?,?,?)", key + values + (market_retrieved_at.isoformat(),))
     return {"articles_in_file": len(articles), "bars_in_file": len(bars),
             "articles_total": db.execute("SELECT count(*) FROM articles").fetchone()[0],
             "bars_total": db.execute("SELECT count(*) FROM bars").fetchone()[0]}

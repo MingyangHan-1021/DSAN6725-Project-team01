@@ -6,5 +6,5 @@
   "min_price": 1.0,
   "min_volume": 1000,
   "max_market_age_days": 4,
-  "scoring_version": "baseline-v1"
+  "scoring_version": "baseline-v3"
 }

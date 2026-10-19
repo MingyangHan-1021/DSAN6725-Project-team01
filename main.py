@@ -1,8 +1,10 @@
 """Command line entry point for Agent 1. Run `python main.py --help`."""
 import argparse
+from contextlib import closing
 from datetime import datetime, timezone
 import json
 from pathlib import Path
+import sqlite3
 import sys
 from uuid import uuid4
 from stock_agent.ingestion import parse_news, parse_market
@@ -21,7 +23,9 @@ def make_parser() -> argparse.ArgumentParser:
     ingest_cmd = commands.add_parser("ingest", help="validate and store teammate files")
     ingest_cmd.add_argument("--news", required=True, help="structured news TXT")
     ingest_cmd.add_argument("--market", required=True, help="OHLCV CSV")
-    ingest_cmd.add_argument("--retrieved-at", help="actual source retrieval time; timezone-aware ISO 8601")
+    ingest_cmd.add_argument("--retrieved-at", help="shared retrieval time fallback for both files; timezone-aware ISO 8601")
+    ingest_cmd.add_argument("--news-retrieved-at", help="actual news retrieval time; overrides --retrieved-at")
+    ingest_cmd.add_argument("--market-retrieved-at", help="actual market retrieval time; overrides --retrieved-at")
     rank_cmd = commands.add_parser("rank", help="export deterministic Top 10")
     rank_cmd.add_argument("--as-of", required=True, help="information cutoff; timezone-aware ISO 8601")
     rank_cmd.add_argument("--top-k", type=int, default=10)
@@ -45,13 +49,21 @@ def make_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = make_parser().parse_args(argv)
     try:
-        with connect(args.db) as db:
+        # sqlite3's context manager commits/rolls back but does not close the connection.
+        with closing(connect(args.db)) as db, db:
             if args.command == "ingest":
-                retrieved = timestamp(args.retrieved_at, "retrieved_at") if args.retrieved_at else datetime.now(timezone.utc)
-                # Parse both files before touching SQLite, so malformed input imports nothing.
-                articles = parse_news(args.news, retrieved)
+                shared = timestamp(args.retrieved_at, "retrieved_at") if args.retrieved_at else None
+                now = datetime.now(timezone.utc)
+                news_retrieved = (timestamp(args.news_retrieved_at, "news_retrieved_at")
+                                  if args.news_retrieved_at else shared or now)
+                market_retrieved = (timestamp(args.market_retrieved_at, "market_retrieved_at")
+                                    if args.market_retrieved_at else shared or now)
+                # Parse both files before inserting rows, so malformed input imports nothing.
+                articles = parse_news(args.news, news_retrieved)
                 bars = parse_market(args.market)
-                result = ingest(db, articles, bars, retrieved)
+                result = ingest(db, articles, bars, market_retrieved)
+                result["news_retrieved_at"] = news_retrieved.isoformat()
+                result["market_retrieved_at"] = market_retrieved.isoformat()
             elif args.command == "rank":
                 as_of = timestamp(args.as_of, "as_of")
                 config = json.loads(Path(args.config).read_text(encoding="utf-8"))
@@ -77,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
                         convert(args.available_before, "available_before"))
         print(json.dumps(result, indent=2))
         return 0
-    except (DataError, OSError, json.JSONDecodeError, KeyError) as exc:
+    except (DataError, OSError, sqlite3.Error, json.JSONDecodeError, KeyError, TypeError) as exc:
         print(f"Agent 1 error: {exc}", file=sys.stderr)
         return 2
 

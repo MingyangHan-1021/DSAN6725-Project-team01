@@ -10,8 +10,9 @@ Use the actual retrieval time from the manifest when ingesting a collection:
 ```bash
 python main.py ingest \
   --news data/news/<date>_news.txt \
+  --news-retrieved-at <news_manifest_retrieved_at> \
   --market data/model/<date>_past_7_days.csv \
-  --retrieved-at <manifest-retrieved_at>
+  --market-retrieved-at <market_manifest_retrieved_at>
 ```
 
 The files contain original factual summaries and source links, not copied article text. `IS_HEADLINE` must remain `unknown` unless homepage placement was independently verified. Do not assign an article to a ticker when the company-symbol mapping is uncertain.
