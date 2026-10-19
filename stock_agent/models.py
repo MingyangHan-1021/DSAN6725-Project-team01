@@ -8,6 +8,11 @@ import re
 class DataError(ValueError):
     """A source record violates the agreed data contract."""
 
+EVENT_TYPES = frozenset({
+    "earnings", "guidance", "m&a", "rating", "contract",
+    "product", "management", "regulatory", "other",
+})
+
 def timestamp(value: str, field: str) -> datetime:
     try:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
@@ -37,6 +42,8 @@ class Article:
     available_at: datetime
     content_hash: str
     canonical_key: str
+    primary_ticker: str | None = None
+    event_type: str | None = None
 
     def __post_init__(self) -> None:
         if not all((self.article_id, self.title, self.source, self.content)):
@@ -48,6 +55,15 @@ class Article:
             raise DataError(f"article {self.article_id}: IS_HEADLINE must be true, false, or unknown")
         for ticker in self.tickers:
             ticker_symbol(ticker)
+        if (self.primary_ticker is None) != (self.event_type is None):
+            raise DataError("PRIMARY_TICKER and EVENT_TYPE must be supplied together")
+        if self.primary_ticker is not None:
+            ticker_symbol(self.primary_ticker)
+            if self.primary_ticker not in self.tickers:
+                raise DataError("PRIMARY_TICKER must also appear in TICKERS")
+            if self.event_type not in EVENT_TYPES:
+                allowed = ", ".join(sorted(EVENT_TYPES))
+                raise DataError(f"EVENT_TYPE must be one of: {allowed}")
 
 @dataclass(frozen=True)
 class Bar:

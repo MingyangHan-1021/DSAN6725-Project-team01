@@ -52,7 +52,10 @@ class Agent1Tests(unittest.TestCase):
         self.populate()
         start = AS_OF - timedelta(days=7)
         # Inject a synthetic article exactly on the inclusive boundary, preserving provenance.
-        self.db.execute("""INSERT INTO articles VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+        self.db.execute("""INSERT INTO articles (
+            article_id,title,source,url,published_at,retrieved_at,available_at,is_headline,
+            content,raw_text,content_hash,canonical_key
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
             ("BOUNDARY", "Synthetic boundary", "Synthetic Wire", "https://example.invalid/boundary",
              start.isoformat(), RETRIEVED.astimezone(start.tzinfo).isoformat(),
              RETRIEVED.astimezone(start.tzinfo).isoformat(), "false", "Synthetic", "Synthetic",

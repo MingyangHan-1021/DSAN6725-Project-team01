@@ -86,7 +86,8 @@ class QdrantMemory:
         for row in rows:
             tickers = [r[0] for r in db.execute("SELECT ticker FROM article_tickers WHERE article_id=?", (row["article_id"],))]
             payload = {key: row[key] for key in ("article_id", "title", "source", "url", "published_at",
-                                                    "retrieved_at", "available_at", "content_hash", "canonical_key")}
+                                                    "retrieved_at", "available_at", "content_hash", "canonical_key",
+                                                    "primary_ticker", "event_type")}
             payload["tickers"] = tickers
             payload["embedding_model"] = self.embedder.name
             points.append({"id": str(uuid5(NAMESPACE_URL, row["article_id"])),

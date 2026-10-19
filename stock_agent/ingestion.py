@@ -7,7 +7,9 @@ from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 from .models import Article, Bar, DataError, timestamp, ticker_symbol
 
-NEWS_FIELDS = ("ID", "TITLE", "SOURCE", "URL", "PUBLISHED_AT", "TICKERS", "IS_HEADLINE")
+REQUIRED_NEWS_FIELDS = ("ID", "TITLE", "SOURCE", "URL", "PUBLISHED_AT", "TICKERS", "IS_HEADLINE")
+OPTIONAL_NEWS_FIELDS = ("PRIMARY_TICKER", "EVENT_TYPE")
+NEWS_FIELDS = REQUIRED_NEWS_FIELDS + OPTIONAL_NEWS_FIELDS
 MARKET_FIELDS = ("ticker", "timestamp", "timeframe", "session", "open", "high", "low", "close", "volume")
 
 def _parse_article(lines: list[str], index: int, retrieved_at: datetime) -> Article:
@@ -26,7 +28,7 @@ def _parse_article(lines: list[str], index: int, retrieved_at: datetime) -> Arti
             if key not in NEWS_FIELDS or key in fields:
                 raise DataError(f"article {index}: unknown or repeated field {key!r}")
             fields[key] = value.strip()
-    missing = [key for key in NEWS_FIELDS if key not in fields]
+    missing = [key for key in REQUIRED_NEWS_FIELDS if key not in fields]
     if missing or not in_body:
         raise DataError(f"article {index}: missing {missing} or CONTENT: marker")
     published = timestamp(fields["PUBLISHED_AT"], f"article {index} PUBLISHED_AT")
@@ -34,6 +36,8 @@ def _parse_article(lines: list[str], index: int, retrieved_at: datetime) -> Arti
         raise DataError(f"article {index}: retrieval precedes publication")
     content = "\n".join(body).strip()
     tickers = tuple(dict.fromkeys(ticker_symbol(x.strip()) for x in fields["TICKERS"].split(",") if x.strip()))
+    primary_ticker = fields.get("PRIMARY_TICKER") or None
+    event_type = fields.get("EVENT_TYPE") or None
     parts = urlsplit(fields["URL"])
     canonical_url = urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path.rstrip("/") or "/", parts.query, ""))
     content_hash = sha256((fields["TITLE"].casefold() + "\n" + content.casefold()).encode()).hexdigest()
@@ -42,7 +46,8 @@ def _parse_article(lines: list[str], index: int, retrieved_at: datetime) -> Arti
     return Article(fields["ID"], fields["TITLE"], fields["SOURCE"], fields["URL"], published,
                    tickers, fields["IS_HEADLINE"], content,
                    "=== ARTICLE ===\n" + "\n".join(lines) + "\n=== END ===",
-                   retrieved_at, retrieved_at, content_hash, canonical_key)
+                   retrieved_at, retrieved_at, content_hash, canonical_key,
+                   primary_ticker=primary_ticker, event_type=event_type)
 
 def parse_news(path: str | Path, retrieved_at: datetime | None = None) -> list[Article]:
     retrieved_at = retrieved_at or datetime.now(timezone.utc)
