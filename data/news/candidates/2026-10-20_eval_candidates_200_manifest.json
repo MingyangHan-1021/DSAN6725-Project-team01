@@ -1,0 +1,34 @@
+{
+  "collection_type": "unlabelled_evaluation_candidates",
+  "candidate_pool_records": 965,
+  "trusted_source_candidates": 509,
+  "selected_records": 200,
+  "publication_dates": 28,
+  "publication_date_range": {
+    "first": "2026-09-03",
+    "last": "2026-10-21"
+  },
+  "distinct_sources": 46,
+  "maximum_records_per_source": 15,
+  "quality_checks": {
+    "unique_ids": 200,
+    "unique_urls": 200,
+    "records_with_primary_ticker": 0,
+    "records_with_event_type": 0,
+    "empty_content": 0
+  },
+  "selection_method": [
+    "Merge three immutable RSS collection batches.",
+    "Normalize feed-section names to the underlying publisher.",
+    "Retain publishers in a reviewed source allowlist.",
+    "Rank observable company-event terms above lifestyle, sports, personal-finance and podcast items.",
+    "Limit each publisher to at most 15 records and select 200 records deterministically."
+  ],
+  "known_limitations": [
+    "This is an unlabelled candidate set, not the final evaluation gold set.",
+    "Google News RSS entries link through Google News and may contain only headline-level summaries.",
+    "Exact URL duplicates were removed; semantic same-event clustering is not performed.",
+    "Repeated coverage by different publishers remains intentionally available for later evaluation design.",
+    "PRIMARY_TICKER and EVENT_TYPE must be assigned only during the planned human annotation stage."
+  ]
+}
