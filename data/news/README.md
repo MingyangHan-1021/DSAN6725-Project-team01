@@ -37,20 +37,35 @@ duplicate URLs within a run. It does not bypass paywalls or copy full articles.
 Feed URLs must be reviewed before each collection because publisher endpoints and
 terms can change. Local feed configuration is not an annotation file.
 
-Multiple raw candidate batches can be merged into a balanced, unlabelled set:
+For the 2026-10-20 evaluation set, first attach conservative S&P 500 ticker
+options and remove entries whose summary only repeats the title. The frozen
+company-name table is `config/sp500_companies.csv`; it matches the revision
+documented in `config/sp500_tickers.txt`.
 
 ```bash
-python -m tools.prepare_eval_candidates \
-  --input data/news/candidates/<batch-1>.jsonl \
-  --input data/news/candidates/<batch-2>.jsonl \
+python -m tools.filter_news_candidates \
+  --input data/news/candidates/<batch-1>.jsonl --input data/news/candidates/<batch-2>.jsonl \
+  --company-map config/sp500_companies.csv \
   --output data/news/candidates/<date>_eval_candidates_200.jsonl \
-  --limit 200 --max-per-source 15 --trusted-only
+  --manifest data/news/candidates/<date>_eval_candidates_200_manifest.json \
+  --published-after 2026-09-20T00:00:00+00:00 \
+  --limit 200 --max-per-source 50
 ```
 
-The preparation step performs exact URL deduplication, normalizes publisher names,
-uses a reviewed publisher allowlist, and limits source concentration. Its keyword
-ranking is only a relevance filter; it does not create gold labels. Preserve the
-raw batches and the generated manifest so the selection can be reproduced.
+This step performs exact URL deduplication, conservative whole-name matching,
+title-only-content rejection, publisher normalization, relevance ranking, and a
+source cap. Every selected row has a nonempty `TICKERS` list, but still has no
+`PRIMARY_TICKER` or `EVENT_TYPE`: those remain model predictions or human gold
+labels. Preserve the raw batches and generated manifest for reproducibility.
+
+The model baseline uses the supplied candidate list and is not allowed to invent
+another ticker:
+
+```bash
+python -m tools.auto_label_news \
+  --input data/news/candidates/<date>_eval_candidates_200.jsonl \
+  --output data/news/model_predictions/<date>_gpt54nano_predictions.jsonl
+```
 
 ## Classified news fields
 

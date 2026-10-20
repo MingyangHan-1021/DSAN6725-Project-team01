@@ -1,34 +1,45 @@
 {
-  "collection_type": "unlabelled_evaluation_candidates",
-  "candidate_pool_records": 965,
-  "trusted_source_candidates": 509,
-  "selected_records": 200,
-  "publication_dates": 28,
-  "publication_date_range": {
-    "first": "2026-09-03",
-    "last": "2026-10-21"
+  "collection_type": "unlabelled_evaluation_candidates_with_ticker_options",
+  "inputs": [
+    "data/news/candidates/2026-10-20_unlabelled.jsonl",
+    "data/news/candidates/2026-10-20_unlabelled_batch2.jsonl",
+    "data/news/candidates/2026-10-20_unlabelled_batch3.jsonl",
+    "data/news/candidates/2026-10-20_unlabelled_batch4.jsonl"
+  ],
+  "input": 1141,
+  "no_sp500_ticker": 273,
+  "title_only_content": 659,
+  "eligible": 209,
+  "before_date_filter": 1271,
+  "outside_date_window": 130,
+  "selected": 200,
+  "unique_urls": 1141,
+  "selection": {
+    "raw": 209,
+    "unique": 209,
+    "duplicates_removed": 0
   },
-  "distinct_sources": 46,
-  "maximum_records_per_source": 15,
+  "company_map": "config/sp500_companies.csv",
+  "company_map_source": "Wikipedia revision 1379247819 (2026-10-08T21:08:16Z)",
+  "output": "data/news/candidates/2026-10-20_eval_candidates_200.jsonl",
   "quality_checks": {
     "unique_ids": 200,
     "unique_urls": 200,
+    "records_with_tickers": 200,
     "records_with_primary_ticker": 0,
     "records_with_event_type": 0,
-    "empty_content": 0
+    "title_only_content": 0
   },
-  "selection_method": [
-    "Merge three immutable RSS collection batches.",
-    "Normalize feed-section names to the underlying publisher.",
-    "Retain publishers in a reviewed source allowlist.",
-    "Rank observable company-event terms above lifestyle, sports, personal-finance and podcast items.",
-    "Limit each publisher to at most 15 records and select 200 records deterministically."
-  ],
+  "coverage": {
+    "distinct_sources": 64,
+    "distinct_publication_dates": 27,
+    "distinct_tickers": 88,
+    "first_published_at": "2026-09-20T20:39:00+00:00",
+    "last_published_at": "2026-10-20T20:49:09+00:00"
+  },
   "known_limitations": [
-    "This is an unlabelled candidate set, not the final evaluation gold set.",
-    "Google News RSS entries link through Google News and may contain only headline-level summaries.",
-    "Exact URL duplicates were removed; semantic same-event clustering is not performed.",
-    "Repeated coverage by different publishers remains intentionally available for later evaluation design.",
-    "PRIMARY_TICKER and EVENT_TYPE must be assigned only during the planned human annotation stage."
+    "Company-name matching is deterministic and conservative but should still be checked during human annotation.",
+    "Exact URL duplicates are removed; semantic same-event clustering is not performed.",
+    "TICKERS are candidate companies, not gold PRIMARY_TICKER labels."
   ]
 }

@@ -35,6 +35,10 @@ class NewsCollectorTests(unittest.TestCase):
         url = "HTTPS://Example.COM/a?gclid=x&keep=1#section"
         self.assertEqual(canonical_url(url), "https://example.com/a?keep=1")
 
+    def test_canonical_url_unwraps_bing_news_redirect(self):
+        url = "https://www.bing.com/news/apiclick.aspx?url=https%3A%2F%2Fexample.com%2Fstory%3Futm_source%3Dbing"
+        self.assertEqual(canonical_url(url), "https://example.com/story")
+
     def test_collect_skips_unavailable_feed(self):
         records = collect(
             [{"source": "Unavailable", "url": "invalid://feed"}],

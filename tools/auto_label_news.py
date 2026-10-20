@@ -15,7 +15,7 @@ from openai import OpenAI, OpenAIError
 from pydantic import BaseModel
 
 
-PROMPT_VERSION = "news-label-v1"
+PROMPT_VERSION = "news-label-v2-candidate-tickers"
 DEFAULT_MODEL = "gpt-5.4-nano-2026-03-17"
 TICKER_PATTERN = re.compile(r"^[A-Z][A-Z0-9.-]{0,9}$")
 
@@ -33,8 +33,7 @@ class EventType(str, Enum):
 
 
 class ModelLabel(BaseModel):
-    tickers: list[str]
-    primary_ticker: str | None
+    primary_ticker: str
     event_type: EventType
 
 
@@ -42,15 +41,10 @@ SYSTEM_PROMPT = """You label financial news for an evaluation dataset.
 
 Return only the structured fields requested by the schema.
 
-TICKERS:
-- Include only exchange ticker symbols that are clearly supported by the supplied headline and summary.
-- Use uppercase US-style symbols. Do not infer a ticker from an uncertain company-name match.
-- Use an empty list when no public-company ticker is reliably identifiable.
-
 PRIMARY_TICKER:
 - Choose the one company most central to the article.
-- It must appear in TICKERS.
-- Use null when TICKERS is empty or no single primary ticker is supportable.
+- It must be selected from the supplied TICKERS list. Never create another ticker.
+- When several companies appear, choose the company whose event is the main reason the article exists.
 
 EVENT_TYPE: choose exactly one.
 - earnings: reported financial results.
@@ -67,17 +61,17 @@ When several types appear, label the event that is the main reason the article e
 later knowledge or browse the web."""
 
 
-def _validate_label(label: ModelLabel) -> ModelLabel:
-    tickers = list(dict.fromkeys(item.strip().upper() for item in label.tickers))
-    if any(not TICKER_PATTERN.fullmatch(item) for item in tickers):
-        raise ValueError(f"model returned an invalid ticker list: {tickers}")
-    primary = label.primary_ticker.strip().upper() if label.primary_ticker else None
-    if primary is not None and primary not in tickers:
-        raise ValueError("model PRIMARY_TICKER is not present in TICKERS")
-    return ModelLabel(tickers=tickers, primary_ticker=primary, event_type=label.event_type)
+def _validate_label(label: ModelLabel, candidates: list[str]) -> ModelLabel:
+    primary = label.primary_ticker.strip().upper()
+    if primary not in candidates:
+        raise ValueError("model PRIMARY_TICKER is not present in supplied TICKERS")
+    return ModelLabel(primary_ticker=primary, event_type=label.event_type)
 
 
 def classify(client: Any, article: dict[str, Any], model: str) -> dict[str, Any]:
+    tickers = list(dict.fromkeys(str(item).strip().upper() for item in article["TICKERS"]))
+    if not tickers or any(not TICKER_PATTERN.fullmatch(item) for item in tickers):
+        raise ValueError(f"article has an invalid TICKERS list: {tickers}")
     started = time.perf_counter()
     response = client.responses.parse(
         model=model,
@@ -88,6 +82,7 @@ def classify(client: Any, article: dict[str, Any], model: str) -> dict[str, Any]
                 "TITLE": article["TITLE"],
                 "SOURCE": article["SOURCE"],
                 "PUBLISHED_AT": article["PUBLISHED_AT"],
+                "TICKERS": tickers,
                 "CONTENT": article["CONTENT"],
             }, ensure_ascii=False)},
         ],
@@ -96,13 +91,13 @@ def classify(client: Any, article: dict[str, Any], model: str) -> dict[str, Any]
     latency_ms = round((time.perf_counter() - started) * 1000)
     if response.output_parsed is None:
         raise ValueError(f"model returned no parsed output for {article['ID']}")
-    label = _validate_label(response.output_parsed)
+    label = _validate_label(response.output_parsed, tickers)
     usage = getattr(response, "usage", None)
     return {
         "ID": article["ID"],
         "MODEL": model,
         "PROMPT_VERSION": PROMPT_VERSION,
-        "TICKERS": label.tickers,
+        "TICKERS": tickers,
         "PRIMARY_TICKER": label.primary_ticker,
         "EVENT_TYPE": label.event_type.value,
         "LATENCY_MS": latency_ms,
@@ -114,7 +109,7 @@ def classify(client: Any, article: dict[str, Any], model: str) -> dict[str, Any]
 
 def read_articles(path: Path) -> list[dict[str, Any]]:
     articles = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    required = {"ID", "TITLE", "SOURCE", "PUBLISHED_AT", "CONTENT"}
+    required = {"ID", "TITLE", "SOURCE", "PUBLISHED_AT", "TICKERS", "CONTENT"}
     seen: set[str] = set()
     for line_number, article in enumerate(articles, 1):
         if not isinstance(article, dict) or not required <= article.keys():
