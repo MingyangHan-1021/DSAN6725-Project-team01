@@ -18,6 +18,25 @@ The files contain original factual summaries and source links, not copied articl
 
 Collections are focused research inputs, not claims of complete market-wide news coverage. Preserve older dated files for reproducibility and historical evaluation instead of overwriting them.
 
+## Unlabelled evaluation candidates
+
+`tools/news_collector.py` collects RSS/Atom metadata into JSONL without assigning
+`PRIMARY_TICKER` or `EVENT_TYPE`. Copy the example feed configuration, replace it
+with verified publisher feed URLs, and keep each dated output immutable:
+
+```bash
+cp config/news_feeds.example.json config/news_feeds.local.json
+python -m tools.news_collector \
+  --feeds config/news_feeds.local.json \
+  --output data/news/candidates/<date>_unlabelled.jsonl
+```
+
+The output preserves title, publisher, canonical URL, publication time, retrieval
+time, and feed summary. The collector removes common tracking parameters and
+duplicate URLs within a run. It does not bypass paywalls or copy full articles.
+Feed URLs must be reviewed before each collection because publisher endpoints and
+terms can change. Local feed configuration is not an annotation file.
+
 ## Classified news fields
 
 Newly classified records may add `PRIMARY_TICKER` and `EVENT_TYPE`. They must be supplied together. The primary ticker must also appear in `TICKERS`, and the event type must be one of `earnings`, `guidance`, `m&a`, `rating`, `contract`, `product`, `management`, `regulatory`, or `other`. Legacy files without these two fields remain valid.
