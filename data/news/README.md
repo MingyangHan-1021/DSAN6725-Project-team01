@@ -37,6 +37,21 @@ duplicate URLs within a run. It does not bypass paywalls or copy full articles.
 Feed URLs must be reviewed before each collection because publisher endpoints and
 terms can change. Local feed configuration is not an annotation file.
 
+Multiple raw candidate batches can be merged into a balanced, unlabelled set:
+
+```bash
+python -m tools.prepare_eval_candidates \
+  --input data/news/candidates/<batch-1>.jsonl \
+  --input data/news/candidates/<batch-2>.jsonl \
+  --output data/news/candidates/<date>_eval_candidates_200.jsonl \
+  --limit 200 --max-per-source 15 --trusted-only
+```
+
+The preparation step performs exact URL deduplication, normalizes publisher names,
+uses a reviewed publisher allowlist, and limits source concentration. Its keyword
+ranking is only a relevance filter; it does not create gold labels. Preserve the
+raw batches and the generated manifest so the selection can be reproduced.
+
 ## Classified news fields
 
 Newly classified records may add `PRIMARY_TICKER` and `EVENT_TYPE`. They must be supplied together. The primary ticker must also appear in `TICKERS`, and the event type must be one of `earnings`, `guidance`, `m&a`, `rating`, `contract`, `product`, `management`, `regulatory`, or `other`. Legacy files without these two fields remain valid.

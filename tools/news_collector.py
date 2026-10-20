@@ -101,10 +101,11 @@ def parse_feed(xml: bytes, source: str, retrieved_at: datetime) -> list[dict[str
         except (TypeError, ValueError):
             continue
         stable_key = link or f"{source}\n{title}\n{published_at}"
+        item_source = plain_text(_child_text(node, {"source"})) or source
         records.append({
             "ID": f"NEWS-{sha256(stable_key.encode('utf-8')).hexdigest()[:16].upper()}",
             "TITLE": title,
-            "SOURCE": source,
+            "SOURCE": item_source,
             "URL": link,
             "PUBLISHED_AT": published_at,
             "RETRIEVED_AT": retrieved_at.isoformat(),

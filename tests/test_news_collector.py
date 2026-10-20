@@ -12,6 +12,7 @@ RSS = b"""<?xml version="1.0" encoding="UTF-8"?>
     <link>https://example.com/story?utm_source=test&amp;ref=feed</link>
     <pubDate>Mon, 19 Oct 2026 14:30:00 -0400</pubDate>
     <description><![CDATA[<p>A factual <b>summary</b>.</p>]]></description>
+    <source>Original Publisher</source>
   </item>
   <item><title>Incomplete record</title></item>
 </channel></rss>"""
@@ -23,7 +24,7 @@ class NewsCollectorTests(unittest.TestCase):
         records = parse_feed(RSS, "Example Publisher", retrieved)
         self.assertEqual(len(records), 1)
         record = records[0]
-        self.assertEqual(record["SOURCE"], "Example Publisher")
+        self.assertEqual(record["SOURCE"], "Original Publisher")
         self.assertEqual(record["URL"], "https://example.com/story?ref=feed")
         self.assertEqual(record["PUBLISHED_AT"], "2026-10-19T14:30:00-04:00")
         self.assertEqual(record["CONTENT"], "A factual summary .")
