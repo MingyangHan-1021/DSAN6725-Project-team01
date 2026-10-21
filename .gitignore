@@ -14,3 +14,5 @@ data/research/*
 data/model/*
 !data/research/.gitkeep
 !data/model/.gitkeep
+.env
+__pycache__/
