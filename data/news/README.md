@@ -1,5 +1,13 @@
 # News data
 
+Files used by the team are kept directly in this directory:
+
+- `news_200.jsonl`: the 200 articles for human annotation.
+- `news_200_with_gpt54nano_predictions.jsonl`: complete articles with GPT baseline labels for later comparison.
+- `2026-10-15_news.txt`: an earlier Agent 1 TXT input.
+
+Raw collection batches, manifests, and API telemetry are kept in `archive/` only for reproducibility.
+
 This directory stores dated, real-world news inputs for Agent 1. Each collection has two files with the same date prefix:
 
 - `<date>_news.txt`: articles in the strict `=== ARTICLE ===` / `=== END ===` ingestion format.
@@ -28,7 +36,7 @@ with verified publisher feed URLs, and keep each dated output immutable:
 cp config/news_feeds.example.json config/news_feeds.local.json
 python -m tools.news_collector \
   --feeds config/news_feeds.local.json \
-  --output data/news/candidates/<date>_unlabelled.jsonl
+  --output data/news/archive/<date>_unlabelled.jsonl
 ```
 
 The output preserves title, publisher, canonical URL, publication time, retrieval
@@ -44,10 +52,10 @@ documented in `config/sp500_tickers.txt`.
 
 ```bash
 python -m tools.filter_news_candidates \
-  --input data/news/candidates/<batch-1>.jsonl --input data/news/candidates/<batch-2>.jsonl \
+  --input data/news/archive/<batch-1>.jsonl --input data/news/archive/<batch-2>.jsonl \
   --company-map config/sp500_companies.csv \
-  --output data/news/candidates/<date>_eval_candidates_200.jsonl \
-  --manifest data/news/candidates/<date>_eval_candidates_200_manifest.json \
+  --output data/news/<date>_eval_candidates_200.jsonl \
+  --manifest data/news/archive/<date>_eval_candidates_200_manifest.json \
   --published-after 2026-09-20T00:00:00+00:00 \
   --limit 200 --max-per-source 50
 ```
@@ -63,9 +71,14 @@ another ticker:
 
 ```bash
 python -m tools.auto_label_news \
-  --input data/news/candidates/<date>_eval_candidates_200.jsonl \
-  --output data/news/model_predictions/<date>_gpt54nano_predictions.jsonl
+  --input data/news/<date>_eval_candidates_200.jsonl \
+  --output data/news/<date>_gpt54nano_predictions.jsonl \
+  --details-output data/news/archive/<date>_gpt54nano_predictions_detailed.jsonl
 ```
+
+The main GPT file contains the complete article plus `PRIMARY_TICKER` and
+`EVENT_TYPE`, with `CONTENT` last. Token counts, latency, request IDs, model and
+prompt versions are stored only in the detailed archive file.
 
 ## Classified news fields
 

@@ -1,10 +1,10 @@
 {
   "collection_type": "unlabelled_evaluation_candidates_with_ticker_options",
   "inputs": [
-    "data/news/candidates/2026-10-20_unlabelled.jsonl",
-    "data/news/candidates/2026-10-20_unlabelled_batch2.jsonl",
-    "data/news/candidates/2026-10-20_unlabelled_batch3.jsonl",
-    "data/news/candidates/2026-10-20_unlabelled_batch4.jsonl"
+    "data/news/archive/2026-10-20_unlabelled.jsonl",
+    "data/news/archive/2026-10-20_unlabelled_batch2.jsonl",
+    "data/news/archive/2026-10-20_unlabelled_batch3.jsonl",
+    "data/news/archive/2026-10-20_unlabelled_batch4.jsonl"
   ],
   "input": 1141,
   "no_sp500_ticker": 273,
@@ -21,7 +21,7 @@
   },
   "company_map": "config/sp500_companies.csv",
   "company_map_source": "Wikipedia revision 1379247819 (2026-10-08T21:08:16Z)",
-  "output": "data/news/candidates/2026-10-20_eval_candidates_200.jsonl",
+  "output": "data/news/news_200.jsonl",
   "quality_checks": {
     "unique_ids": 200,
     "unique_urls": 200,

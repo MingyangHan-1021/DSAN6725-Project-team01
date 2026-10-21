@@ -109,7 +109,7 @@ def classify(client: Any, article: dict[str, Any], model: str) -> dict[str, Any]
 
 def read_articles(path: Path) -> list[dict[str, Any]]:
     articles = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    required = {"ID", "TITLE", "SOURCE", "PUBLISHED_AT", "TICKERS", "CONTENT"}
+    required = {"ID", "TITLE", "SOURCE", "URL", "PUBLISHED_AT", "TICKERS", "CONTENT"}
     seen: set[str] = set()
     for line_number, article in enumerate(articles, 1):
         if not isinstance(article, dict) or not required <= article.keys():
@@ -120,24 +120,76 @@ def read_articles(path: Path) -> list[dict[str, Any]]:
     return articles
 
 
+def labelled_article(article: dict[str, Any], prediction: dict[str, Any]) -> dict[str, Any]:
+    """Return the complete, readable labelled article with CONTENT last."""
+    result = {
+        "ID": article["ID"],
+        "TITLE": article["TITLE"],
+        "SOURCE": article["SOURCE"],
+        "URL": article["URL"],
+        "PUBLISHED_AT": article["PUBLISHED_AT"],
+    }
+    if "RETRIEVED_AT" in article:
+        result["RETRIEVED_AT"] = article["RETRIEVED_AT"]
+    result.update({
+        "TICKERS": article["TICKERS"],
+        "PRIMARY_TICKER": prediction["PRIMARY_TICKER"],
+        "EVENT_TYPE": prediction["EVENT_TYPE"],
+        "CONTENT": article["CONTENT"],
+    })
+    return result
+
+
 def write_predictions(client: Any, articles: Iterable[dict[str, Any]], output: Path,
-                      model: str, overwrite: bool = False) -> int:
+                      model: str, overwrite: bool = False,
+                      details_output: Path | None = None) -> int:
     if output.exists() and not overwrite:
         raise FileExistsError(f"output already exists: {output}")
+    if details_output is not None and details_output.exists() and not overwrite:
+        raise FileExistsError(f"details output already exists: {details_output}")
     selected = list(articles)
     output.parent.mkdir(parents=True, exist_ok=True)
     partial = output.with_name(output.name + ".partial")
+    details_partial = None
+    if details_output is not None:
+        details_output.parent.mkdir(parents=True, exist_ok=True)
+        details_partial = details_output.with_name(details_output.name + ".partial")
     try:
-        with partial.open("w", encoding="utf-8") as handle:
+        with partial.open("w", encoding="utf-8") as handle, \
+                (details_partial.open("w", encoding="utf-8") if details_partial else _NullWriter()) as details:
             for index, article in enumerate(selected, 1):
                 prediction = classify(client, article, model)
-                handle.write(json.dumps(prediction, ensure_ascii=False) + "\n")
+                handle.write(json.dumps(labelled_article(article, prediction), ensure_ascii=False) + "\n")
                 handle.flush()
+                if details_partial:
+                    details.write(json.dumps(prediction, ensure_ascii=False) + "\n")
+                    details.flush()
                 print(json.dumps({"completed": index, "total": len(selected), "id": article["ID"]}))
         partial.replace(output)
+        if details_partial and details_output:
+            details_partial.replace(details_output)
     except BaseException:
+        partial.unlink(missing_ok=True)
+        if details_partial:
+            details_partial.unlink(missing_ok=True)
         raise
     return len(selected)
+
+
+class _NullWriter:
+    """Minimal context manager used when no technical-details file is requested."""
+
+    def __enter__(self) -> "_NullWriter":
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        return None
+
+    def write(self, _: str) -> None:
+        return None
+
+    def flush(self) -> None:
+        return None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -145,6 +197,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Label evaluation news with an OpenAI model")
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--details-output", help="optional API telemetry JSONL kept outside the main data file")
     parser.add_argument("--model", default=os.getenv("OPENAI_MODEL", DEFAULT_MODEL))
     parser.add_argument("--limit", type=int)
     parser.add_argument("--overwrite", action="store_true")
@@ -157,7 +210,10 @@ def main(argv: list[str] | None = None) -> int:
             if args.limit <= 0:
                 raise ValueError("--limit must be positive")
             articles = articles[:args.limit]
-        count = write_predictions(OpenAI(), articles, Path(args.output), args.model, args.overwrite)
+        details_output = Path(args.details_output) if args.details_output else None
+        count = write_predictions(
+            OpenAI(), articles, Path(args.output), args.model, args.overwrite, details_output
+        )
         print(json.dumps({"predictions_written": count, "model": args.model, "output": args.output}))
         return 0
     except (FileExistsError, OSError, ValueError, json.JSONDecodeError, OpenAIError) as exc:
