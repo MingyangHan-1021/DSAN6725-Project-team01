@@ -1,4 +1,4 @@
-"""Attach S&P 500 tickers and remove unusable news evaluation candidates."""
+"""Filter news candidates to S&P 500 articles and attach candidate TICKERS."""
 from __future__ import annotations
 
 import argparse
@@ -36,10 +36,12 @@ CANONICAL_SHARE_CLASS = {"GOOG": "GOOGL", "FOX": "FOXA", "NWS": "NWSA"}
 # Every value must also exist in config/sp500_tickers.txt.
 ALIASES: dict[str, tuple[str, ...]] = {
     "AAPL": ("Apple",),
+    "AMD": ("AMD",),
     "AMZN": ("Amazon",),
-    "BRK.B": ("Berkshire", "Berkshire Hathaway"),
+    "BRK-B": ("Berkshire", "Berkshire Hathaway"),
     "DELL": ("Dell",),
     "DIS": ("Disney",),
+    "GE": ("GE",),
     "GOOGL": ("Alphabet", "Google"),
     "JPM": ("JPMorgan", "JPMorgan Chase"),
     "META": ("Meta", "Facebook"),
@@ -49,11 +51,14 @@ ALIASES: dict[str, tuple[str, ...]] = {
     "NTAP": ("NetApp",),
     "NVDA": ("Nvidia",),
     "ORCL": ("Oracle",),
+    "RTX": ("RTX", "Raytheon"),
     "SBUX": ("Starbucks",),
     "T": ("AT&T",),
     "TSLA": ("Tesla",),
+    "UPS": ("UPS",),
     "WMT": ("Walmart",),
 }
+SYMBOL_ALIASES = {"AMD", "GE", "RTX", "UPS"}
 
 
 def normalize(text: str) -> str:
@@ -78,24 +83,29 @@ def load_company_names(path: Path) -> dict[str, set[str]]:
     names: dict[str, set[str]] = {}
     with path.open(encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
-            ticker = row["ticker"].strip().upper()
+            ticker = row["ticker"].strip().upper().replace(".", "-")
             canonical = CANONICAL_SHARE_CLASS.get(ticker, ticker)
             names.setdefault(canonical, set()).update(company_variants(row["company_name"]))
     for ticker, aliases in ALIASES.items():
         if ticker not in names:
             raise ValueError(f"alias ticker is absent from company map: {ticker}")
-        names[ticker].update(normalize(alias) for alias in aliases)
+        names[ticker].update(normalize(alias) for alias in aliases if alias not in SYMBOL_ALIASES)
     return names
 
 
 def find_tickers(record: dict[str, Any], company_names: dict[str, set[str]]) -> list[str]:
     """Find S&P 500 companies explicitly named in an article."""
-    text = f" {normalize(str(record.get('TITLE', '')) + ' ' + str(record.get('CONTENT', '')))} "
+    raw_text = str(record.get("TITLE", "")) + " " + str(record.get("CONTENT", ""))
+    text = f" {normalize(raw_text)} "
     found = {
         ticker
         for ticker, names in company_names.items()
         if any(f" {name} " in text for name in names)
     }
+    found.update(
+        ticker for ticker in SYMBOL_ALIASES
+        if ticker in company_names and re.search(rf"(?<![A-Za-z0-9]){ticker}(?![A-Za-z0-9])", raw_text)
+    )
     return sorted(found)
 
 
@@ -118,22 +128,37 @@ def content_repeats_title(title: str, content: str) -> bool:
     return False
 
 
+def is_non_article(content: str) -> bool:
+    """Detect author bio pages and video pages with no text."""
+    text = content.strip().casefold()
+    if len(text.split()) < 5:
+        return True
+    if re.fullmatch(r"source: .*\d+:\d+", text):
+        return True
+    return bool(re.search(r"\bis a (reporter|correspondent|writer|editor)\b", text))
+
+
 def filter_records(records: Iterable[dict[str, Any]], company_names: dict[str, set[str]]) \
         -> tuple[list[dict[str, Any]], dict[str, int]]:
     """Attach tickers and report why records were excluded."""
     kept: list[dict[str, Any]] = []
-    stats = {"input": 0, "no_sp500_ticker": 0, "title_only_content": 0, "eligible": 0}
+    stats = {"input": 0, "no_sp500_ticker": 0, "title_only_content": 0, "non_article": 0, "eligible": 0}
     for record in records:
         stats["input"] += 1
         if content_repeats_title(str(record.get("TITLE", "")), str(record.get("CONTENT", ""))):
             stats["title_only_content"] += 1
+            continue
+        if is_non_article(str(record.get("CONTENT", ""))):
+            stats["non_article"] += 1
             continue
         tickers = find_tickers(record, company_names)
         if not tickers:
             stats["no_sp500_ticker"] += 1
             continue
         cleaned = dict(record)
+        content = cleaned.pop("CONTENT", "")
         cleaned["TICKERS"] = tickers
+        cleaned["CONTENT"] = content
         kept.append(cleaned)
     stats["eligible"] = len(kept)
     return kept, stats
