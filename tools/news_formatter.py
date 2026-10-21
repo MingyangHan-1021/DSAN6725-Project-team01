@@ -21,6 +21,7 @@ FIELDS = (
 )
 REQUIRED = frozenset(FIELDS) - {"IS_HEADLINE"}
 RESERVED_LINES = frozenset({"=== ARTICLE ===", "=== END ==="})
+OPTIONAL = frozenset({"RETRIEVED_AT"})
 
 
 def _nonempty_string(record: dict[str, Any], field: str, line_number: int) -> str:
@@ -38,12 +39,12 @@ def _tickers(record: dict[str, Any], line_number: int) -> list[str]:
         values = [item.strip() for item in value if item.strip()]
     else:
         raise DataError(f"JSONL line {line_number}: TICKERS must be a string or list of strings")
-    return list(dict.fromkeys(ticker_symbol(item) for item in values))
+    return list(dict.fromkeys(ticker_symbol(item.replace(".", "-")) for item in values))
 
 
 def render_record(record: dict[str, Any], line_number: int) -> str:
     missing = sorted(REQUIRED - record.keys())
-    unknown = sorted(record.keys() - set(FIELDS))
+    unknown = sorted(record.keys() - set(FIELDS) - OPTIONAL)
     if missing or unknown:
         raise DataError(f"JSONL line {line_number}: missing {missing}; unknown {unknown}")
 
@@ -54,7 +55,7 @@ def render_record(record: dict[str, Any], line_number: int) -> str:
     published_at = _nonempty_string(record, "PUBLISHED_AT", line_number)
     timestamp(published_at, f"JSONL line {line_number} PUBLISHED_AT")
     tickers = _tickers(record, line_number)
-    primary = ticker_symbol(_nonempty_string(record, "PRIMARY_TICKER", line_number))
+    primary = ticker_symbol(_nonempty_string(record, "PRIMARY_TICKER", line_number).replace(".", "-"))
     if primary not in tickers:
         raise DataError(f"JSONL line {line_number}: PRIMARY_TICKER must also appear in TICKERS")
     event_type = _nonempty_string(record, "EVENT_TYPE", line_number)
