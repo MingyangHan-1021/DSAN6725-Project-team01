@@ -65,6 +65,23 @@ class NewsFormatterTests(unittest.TestCase):
         with self.assertRaisesRegex(DataError, "unsupported EVENT_TYPE"):
             format_jsonl(self.write_jsonl(record), self.root / "news.txt", self.retrieved)
 
+    def test_retrieved_at_is_allowed_but_not_rendered(self):
+        record = self.record()
+        record["RETRIEVED_AT"] = "2026-10-15T11:00:00-04:00"
+        output = self.root / "news.txt"
+        format_jsonl(self.write_jsonl(record), output, self.retrieved)
+        self.assertNotIn("RETRIEVED_AT:", output.read_text(encoding="utf-8"))
+
+    def test_dot_ticker_is_rendered_with_hyphen(self):
+        record = self.record()
+        record["TICKERS"] = ["BRK.B"]
+        record["PRIMARY_TICKER"] = "BRK.B"
+        output = self.root / "news.txt"
+        format_jsonl(self.write_jsonl(record), output, self.retrieved)
+        text = output.read_text(encoding="utf-8")
+        self.assertIn("TICKERS: BRK-B", text)
+        self.assertIn("PRIMARY_TICKER: BRK-B", text)
+
     def test_legacy_article_can_gain_but_not_change_classification(self):
         classified_output = self.root / "classified.txt"
         format_jsonl(self.write_jsonl(self.record()), classified_output, self.retrieved)

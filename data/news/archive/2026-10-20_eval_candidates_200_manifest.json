@@ -1,0 +1,45 @@
+{
+  "collection_type": "unlabelled_evaluation_candidates_with_ticker_options",
+  "inputs": [
+    "data/news/archive/2026-10-20_unlabelled.jsonl",
+    "data/news/archive/2026-10-20_unlabelled_batch2.jsonl",
+    "data/news/archive/2026-10-20_unlabelled_batch3.jsonl",
+    "data/news/archive/2026-10-20_unlabelled_batch4.jsonl"
+  ],
+  "input": 1141,
+  "no_sp500_ticker": 273,
+  "title_only_content": 659,
+  "eligible": 209,
+  "before_date_filter": 1271,
+  "outside_date_window": 130,
+  "selected": 200,
+  "unique_urls": 1141,
+  "selection": {
+    "raw": 209,
+    "unique": 209,
+    "duplicates_removed": 0
+  },
+  "company_map": "config/sp500_companies.csv",
+  "company_map_source": "Wikipedia revision 1379247819 (2026-10-08T21:08:16Z)",
+  "output": "data/news/news_200.jsonl",
+  "quality_checks": {
+    "unique_ids": 200,
+    "unique_urls": 200,
+    "records_with_tickers": 200,
+    "records_with_primary_ticker": 0,
+    "records_with_event_type": 0,
+    "title_only_content": 0
+  },
+  "coverage": {
+    "distinct_sources": 64,
+    "distinct_publication_dates": 27,
+    "distinct_tickers": 88,
+    "first_published_at": "2026-09-20T20:39:00+00:00",
+    "last_published_at": "2026-10-20T20:49:09+00:00"
+  },
+  "known_limitations": [
+    "Company-name matching is deterministic and conservative but should still be checked during human annotation.",
+    "Exact URL duplicates are removed; semantic same-event clustering is not performed.",
+    "TICKERS are candidate companies, not gold PRIMARY_TICKER labels."
+  ]
+}

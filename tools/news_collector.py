@@ -42,6 +42,10 @@ def plain_text(value: str | None) -> str:
 
 def canonical_url(value: str) -> str:
     parts = urlsplit(value.strip())
+    if parts.netloc.lower() in {"bing.com", "www.bing.com"} and parts.path == "/news/apiclick.aspx":
+        target = dict(parse_qsl(parts.query)).get("url")
+        if target:
+            return canonical_url(target)
     query = [
         (key, item) for key, item in parse_qsl(parts.query, keep_blank_values=True)
         if not key.lower().startswith("utm_") and key.lower() not in TRACKING_PARAMETERS
@@ -101,7 +105,7 @@ def parse_feed(xml: bytes, source: str, retrieved_at: datetime) -> list[dict[str
         except (TypeError, ValueError):
             continue
         stable_key = link or f"{source}\n{title}\n{published_at}"
-        item_source = plain_text(_child_text(node, {"source"})) or source
+        item_source = plain_text(_child_text(node, {"source", "Source"})) or source
         records.append({
             "ID": f"NEWS-{sha256(stable_key.encode('utf-8')).hexdigest()[:16].upper()}",
             "TITLE": title,
