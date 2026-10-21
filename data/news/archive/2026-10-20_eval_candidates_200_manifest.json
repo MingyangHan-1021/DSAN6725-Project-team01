@@ -7,8 +7,9 @@
     "data/news/archive/2026-10-20_unlabelled_batch4.jsonl"
   ],
   "input": 1141,
-  "no_sp500_ticker": 273,
+  "no_sp500_ticker": 257,
   "title_only_content": 659,
+  "non_article": 16,
   "eligible": 209,
   "before_date_filter": 1271,
   "outside_date_window": 130,
@@ -31,9 +32,9 @@
     "title_only_content": 0
   },
   "coverage": {
-    "distinct_sources": 64,
+    "distinct_sources": 63,
     "distinct_publication_dates": 27,
-    "distinct_tickers": 88,
+    "distinct_tickers": 90,
     "first_published_at": "2026-09-20T20:39:00+00:00",
     "last_published_at": "2026-10-20T20:49:09+00:00"
   },

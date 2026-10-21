@@ -1,7 +1,7 @@
 """Tests for deterministic S&P 500 ticker attachment and content filtering."""
 import unittest
 
-from tools.filter_news_candidates import content_repeats_title, filter_records, find_tickers
+from tools.filter_news_candidates import content_repeats_title, filter_records, find_tickers, is_non_article
 
 
 class FilterNewsCandidatesTests(unittest.TestCase):
@@ -28,22 +28,39 @@ class FilterNewsCandidatesTests(unittest.TestCase):
         row = {"TITLE": "An ornate design", "CONTENT": "The story is not about Oracle."}
         self.assertEqual(find_tickers(row, {"T": {"at"}}), [])
 
+    def test_short_symbol_alias_is_case_sensitive_and_word_bounded(self):
+        names = {"UPS": {"united parcel service"}}
+        self.assertEqual(find_tickers({"TITLE": "Battery start-ups", "CONTENT": "New factories."}, names), [])
+        self.assertEqual(find_tickers({"TITLE": "UPS raises outlook", "CONTENT": "Parcel demand rose."}, names), ["UPS"])
+
     def test_detects_title_only_rss_description(self):
         title = "Netflix reports third-quarter earnings"
         self.assertTrue(content_repeats_title(title, title + " - Example News"))
         self.assertFalse(content_repeats_title(title, "Revenue beat estimates, but management forecast slower growth next quarter."))
 
+    def test_detects_non_article_content(self):
+        self.assertTrue(is_non_article("Source: Bloomberg, 0:00"))
+        self.assertTrue(is_non_article("Esther Fung is a reporter at the publication."))
+        self.assertFalse(is_non_article("GE raised its annual outlook as demand for aircraft engines remained strong."))
+
     def test_filters_and_attaches_tickers(self):
         rows = [
-            {"ID": "1", "TITLE": "Netflix earnings", "CONTENT": "Netflix revenue beat expectations."},
+            {"ID": "1", "TITLE": "Netflix earnings", "CONTENT": "Netflix quarterly revenue beat Wall Street expectations."},
             {"ID": "2", "TITLE": "Unrelated story", "CONTENT": "No listed company is named here."},
             {"ID": "3", "TITLE": "Dell shares fall", "CONTENT": "Dell shares fall - News"},
         ]
         kept, stats = filter_records(rows, self.names)
         self.assertEqual(kept[0]["TICKERS"], ["NFLX"])
         self.assertEqual(stats, {
-            "input": 3, "no_sp500_ticker": 1, "title_only_content": 1, "eligible": 1,
+            "input": 3, "no_sp500_ticker": 1, "title_only_content": 1, "non_article": 0,
+            "eligible": 1,
         })
+
+    def test_keeps_content_as_last_field(self):
+        rows = [{"ID": "1", "TITLE": "Netflix earnings",
+                 "CONTENT": "Netflix quarterly revenue beat Wall Street expectations."}]
+        kept, _ = filter_records(rows, self.names)
+        self.assertEqual(list(kept[0])[-2:], ["TICKERS", "CONTENT"])
 
 
 if __name__ == "__main__":
