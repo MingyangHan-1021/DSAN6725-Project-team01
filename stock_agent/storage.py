@@ -33,6 +33,19 @@ CREATE INDEX IF NOT EXISTS articles_available ON articles(available_at,published
 CREATE INDEX IF NOT EXISTS bars_time ON bars(timestamp,timeframe,session);
 """
 
+def _raw_without_classification(raw_text: str) -> str:
+    """Compare original evidence while allowing optional classification headers to be added."""
+    lines = raw_text.splitlines(keepends=True)
+    header = True
+    kept = []
+    for line in lines:
+        if header and line.strip() == "CONTENT:":
+            header = False
+        if header and line.startswith(("PRIMARY_TICKER:", "EVENT_TYPE:")):
+            continue
+        kept.append(line)
+    return "".join(kept)
+
 def connect(path: str | Path) -> sqlite3.Connection:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -59,10 +72,10 @@ def ingest(db: sqlite3.Connection, articles: list[Article], bars: list[Bar], mar
             if existing:
                 # A stable ID cannot silently acquire different provenance or headline status.
                 if (existing["title"], existing["source"], existing["url"], existing["published_at"],
-                    existing["is_headline"], existing["content"], existing["raw_text"],
+                    existing["is_headline"], existing["content"], _raw_without_classification(existing["raw_text"]),
                     existing["content_hash"], existing["canonical_key"]) != (
                     article.title, article.source, article.url, article.published_at.isoformat(),
-                    article.is_headline, article.content, article.raw_text,
+                    article.is_headline, article.content, _raw_without_classification(article.raw_text),
                     article.content_hash, article.canonical_key):
                     raise DataError(f"article ID {article.article_id} conflicts with stored evidence")
                 previous = {row[0] for row in db.execute("SELECT ticker FROM article_tickers WHERE article_id=?", (article.article_id,))}
