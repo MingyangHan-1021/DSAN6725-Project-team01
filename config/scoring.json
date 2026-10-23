@@ -1,10 +1,14 @@
 {
   "weights": {"market": 0.6, "news": 0.4},
+  "news_universe_file": "config/sp500_tickers.txt",
+  "news_timezone": "America/New_York",
+  "news_window_days": 7,
+  "news_feature_weights": {"article_mentions": 0.3333333333333333, "source_breadth": 0.3333333333333333, "verified_headlines": 0.3333333333333334},
   "timeframe": "1Day",
   "session": "regular",
   "volume_baseline_bars": 3,
   "min_price": 1.0,
   "min_volume": 1000,
   "max_market_age_days": 4,
-  "scoring_version": "baseline-v3"
+  "scoring_version": "baseline-v4-daily-news"
 }

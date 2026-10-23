@@ -54,6 +54,23 @@ class NewsFormatterTests(unittest.TestCase):
             ).fetchone()
             self.assertEqual(tuple(stored), ("DELL", "rating"))
 
+    def test_unclassified_collector_record_round_trips(self):
+        record = self.record()
+        del record["PRIMARY_TICKER"]
+        del record["EVENT_TYPE"]
+        output = self.root / "news.txt"
+        format_jsonl(self.write_jsonl(record), output, self.retrieved)
+        article = parse_news(output, self.retrieved)[0]
+        self.assertIsNone(article.primary_ticker)
+        self.assertIsNone(article.event_type)
+        self.assertEqual(article.tickers, ("DELL", "HPE"))
+
+    def test_partial_classification_is_rejected(self):
+        record = self.record()
+        del record["EVENT_TYPE"]
+        with self.assertRaisesRegex(DataError, "must be supplied together"):
+            format_jsonl(self.write_jsonl(record), self.root / "news.txt", self.retrieved)
+
     def test_primary_ticker_must_be_in_tickers(self):
         record = self.record()
         record["PRIMARY_TICKER"] = "ORCL"

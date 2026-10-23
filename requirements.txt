@@ -1,0 +1,6 @@
+# Python's zoneinfo needs the IANA database on Windows for New York news days.
+tzdata>=2026.1; platform_system == "Windows"
+playwright>=1.55
+openai>=2.0
+pydantic>=2.0
+python-dotenv>=1.0

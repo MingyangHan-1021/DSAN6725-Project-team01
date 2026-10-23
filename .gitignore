@@ -16,3 +16,5 @@ data/model/*
 !data/model/.gitkeep
 .env
 __pycache__/
+config/browser_news_sources_test.json
+data/news/test/

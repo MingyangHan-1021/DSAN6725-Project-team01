@@ -10,6 +10,7 @@ import sqlite3
 import tempfile
 import unittest
 from stock_agent.ingestion import parse_news, parse_market
+from stock_agent.daily_news import score_daily_news
 from stock_agent.memory import HashEmbedding, QdrantMemory
 from stock_agent.models import DataError, timestamp
 from stock_agent.scoring import news_features, percentile, rank
@@ -108,8 +109,28 @@ class Agent1Tests(unittest.TestCase):
         self.db.commit()
         output = rank(self.db, AS_OF, CONFIG)
         self.assertTrue(all(row["main_signals"]["verified_headlines"] == 0 for row in output["ranked"]))
-        self.assertEqual(output["ranked"][0]["news_score"], 2 / 3)
-        self.assertEqual(output["ranked"][1]["news_score"], 0.0)
+        self.assertAlmostEqual(output["news_scores"]["ALDR"]["news_score"], (2 / 3) / 7)
+        self.assertAlmostEqual(output["news_scores"]["BRCH"]["news_score"], (2 / 3) / 7)
+        self.assertEqual(output["news_scores"]["AAPL"]["news_score"], 0.0)
+
+    def test_daily_news_scores_cover_empty_days_and_all_universe_tickers(self):
+        self.populate()
+        result = score_daily_news(self.db, AS_OF, ["ALDR", "BRCH", "ZERO"], CONFIG)
+        self.assertEqual(len(result["dates"]), 7)
+        self.assertEqual(result["dates"], ["2026-10-02", "2026-10-03", "2026-10-04",
+                                          "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08"])
+        self.assertEqual(result["scores"]["ZERO"]["news_score"], 0.0)
+        self.assertTrue(all(day["score"] == 0 for day in result["scores"]["ZERO"]["daily"]))
+        alder_day = result["scores"]["ALDR"]["daily"][5]
+        self.assertEqual((alder_day["article_mentions"], alder_day["source_breadth"],
+                          alder_day["verified_headlines"]), (2, 2, 1))
+        self.assertEqual(result["scores"]["ALDR"]["daily"][6]["score"], 0.0)
+
+    def test_daily_news_respects_availability_cutoff(self):
+        self.populate()
+        before = RETRIEVED - timedelta(seconds=1)
+        result = score_daily_news(self.db, before, ["ALDR", "BRCH"], CONFIG)
+        self.assertTrue(all(row["news_score"] == 0 for row in result["scores"].values()))
 
     def test_news_and_market_have_independent_availability(self):
         market_retrieved = timestamp("2026-10-08T07:00:00-04:00", "market")
@@ -151,6 +172,24 @@ class Agent1Tests(unittest.TestCase):
             market_time = db.execute("SELECT available_at FROM bars LIMIT 1").fetchone()[0]
         self.assertEqual(news_time, "2026-10-08T12:00:00+00:00")
         self.assertEqual(market_time, "2026-10-08T11:00:00+00:00")
+
+    def test_rank_persists_all_daily_and_rolling_news_scores(self):
+        self.populate()
+        output_path = Path(self.temp.name) / "ranking.json"
+        with redirect_stdout(StringIO()) as printed:
+            status = main(["--db", str(Path(self.temp.name) / "agent1.sqlite3"),
+                           "rank", "--as-of", "2026-10-08T09:00:00-04:00",
+                           "--output", str(output_path)])
+        self.assertEqual(status, 0)
+        result = json.loads(printed.getvalue())
+        self.assertEqual(len(result["news_scores"]), result["news_score_universe"])
+        self.assertEqual(result["news_scores"]["AAPL"]["news_score"], 0.0)
+        count = self.db.execute("SELECT count(*) FROM daily_news_scores WHERE run_id=?",
+                                (result["run_id"],)).fetchone()[0]
+        self.assertEqual(count, 7 * result["news_score_universe"])
+        self.assertEqual(self.db.execute("SELECT count(*) FROM rolling_news_scores WHERE run_id=?",
+                                         (result["run_id"],)).fetchone()[0], result["news_score_universe"])
+        self.assertEqual(json.loads(output_path.read_text())["run_id"], result["run_id"])
 
     def test_memory_filter_includes_availability(self):
         class FakeMemory(QdrantMemory):

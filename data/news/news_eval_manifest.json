@@ -1,0 +1,41 @@
+{
+  "collection_type": "unlabelled_evaluation_candidates_browser",
+  "method": "llm_assisted_browser, prompt browser-news-v2, gpt-5.4-nano-2026-03-17",
+  "collected_on": "2026-10-23",
+  "cutoff": "2026-10-20T00:00:00-04:00",
+  "inputs": [
+    "data/news/eval/2026-10-23_browser_raw.jsonl",
+    "data/news/eval/2026-10-23_browser_raw_batch2.jsonl"
+  ],
+  "source_configs": [
+    "config/browser_news_sources_eval.json",
+    "config/browser_news_sources_eval2.json"
+  ],
+  "articles": 135,
+  "duplicate_urls_removed": 7,
+  "sources": {
+    "Yahoo Finance": 69,
+    "CNBC": 36,
+    "Zacks Equity Research": 6,
+    "Reuters": 6,
+    "24/7 Wall St.": 5,
+    "MT Newswires": 2,
+    "Simply Wall St": 2,
+    "The Motley Fool": 2,
+    "PR Newswire": 2,
+    "AFP": 1,
+    "Associated Press": 1,
+    "Bloomberg": 1,
+    "The Fly": 1,
+    "USA TODAY": 1
+  },
+  "distinct_tickers": 79,
+  "first_published_at": "2026-10-20T04:01:01+00:00",
+  "last_published_at": "2026-10-23T22:08:17+00:00",
+  "collection_cost_usd": 0.14,
+  "known_limitations": [
+    "CONTENT is a model-written summary of the opened page, not original text.",
+    "Listing pages had no pagination; coverage is what the pages showed on 2026-10-23.",
+    "Yahoo Finance and CNBC dominate the sample."
+  ]
+}
