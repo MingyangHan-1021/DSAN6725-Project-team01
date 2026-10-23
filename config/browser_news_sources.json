@@ -2,7 +2,12 @@
   {
     "source": "Yahoo Finance",
     "start_url": "https://finance.yahoo.com/topic/stock-market-news/",
-    "allowed_hosts": ["finance.yahoo.com"],
+    "allowed_hosts": [
+      "finance.yahoo.com"
+    ],
+    "article_url_patterns": [
+      "^https://finance\\.yahoo\\.com/(markets|technology|news|economy|sectors)/([a-z-]+/)?articles?/[^/?#]+-\\d+\\.html"
+    ],
     "max_pages": 3,
     "max_articles": 30,
     "use_page_publisher": true
@@ -10,29 +15,40 @@
   {
     "source": "CNBC",
     "start_url": "https://www.cnbc.com/markets/",
-    "allowed_hosts": ["www.cnbc.com"],
+    "allowed_hosts": [
+      "www.cnbc.com"
+    ],
+    "article_url_patterns": [
+      "^https://www\\.cnbc\\.com/20\\d\\d/\\d\\d/\\d\\d/[^/?#]+\\.html"
+    ],
     "max_pages": 4,
-    "max_articles": 35
+    "max_articles": 35,
+    "title_must_name_company": true
   },
   {
     "source": "24/7 Wall St.",
     "start_url": "https://247wallst.com/investing/",
-    "allowed_hosts": ["247wallst.com", "www.247wallst.com"],
+    "allowed_hosts": [
+      "247wallst.com",
+      "www.247wallst.com"
+    ],
+    "article_url_patterns": [
+      "^https://(www\\.)?247wallst\\.com/[a-z0-9-]+/20\\d\\d/\\d\\d/\\d\\d/[^/?#]+"
+    ],
     "max_pages": 4,
     "max_articles": 35
   },
   {
     "source": "PR Newswire",
     "start_url": "https://www.prnewswire.com/news-releases/news-releases-list/",
-    "allowed_hosts": ["www.prnewswire.com"],
+    "allowed_hosts": [
+      "www.prnewswire.com"
+    ],
+    "article_url_patterns": [
+      "^https://www\\.prnewswire\\.com/news-releases/[a-z0-9-]+-\\d+\\.html"
+    ],
     "max_pages": 5,
-    "max_articles": 60
-  },
-  {
-    "source": "GlobeNewswire",
-    "start_url": "https://www.globenewswire.com/en/newsroom",
-    "allowed_hosts": ["www.globenewswire.com"],
-    "max_pages": 5,
-    "max_articles": 60
+    "max_articles": 60,
+    "title_must_name_company": true
   }
 ]

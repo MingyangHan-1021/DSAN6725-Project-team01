@@ -1,0 +1,346 @@
+{
+  "method": "llm_assisted_browser",
+  "prompt_version": "browser-news-v2",
+  "run_at": "2026-10-23T22:37:44.367118+00:00",
+  "cutoff": "2026-10-20T00:00:00-04:00",
+  "sources": [
+    {
+      "source": "Yahoo Finance",
+      "start_url": "https://finance.yahoo.com/topic/latest-news/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "page_limit",
+      "pages_visited": [
+        "https://finance.yahoo.com/topic/latest-news/"
+      ],
+      "articles_opened": [
+        "https://finance.yahoo.com/economy/policy/articles/unrest-hit-france-poised-moodys-103545024.html",
+        "https://finance.yahoo.com/markets/articles/tech-selloff-relents-oil-five-103308077.html",
+        "https://finance.yahoo.com/economy/articles/consumers-across-party-lines-fed-173010932.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-flood-fed-meeting-pose-100557196.html",
+        "https://finance.yahoo.com/markets/commodities/articles/hedge-funds-record-short-natural-205409918.html",
+        "https://finance.yahoo.com/technology/ai/articles/exclusive-meta-acquires-ai-data-205220376.html",
+        "https://finance.yahoo.com/markets/stocks/articles/wall-st-set-open-lower-130848087.html",
+        "https://finance.yahoo.com/technology/ai/articles/window-vulnerability-banks-move-restrict-202731426.html",
+        "https://finance.yahoo.com/markets/world-indices/articles/major-us-stock-indexes-fared-201458598.html",
+        "https://finance.yahoo.com/economy/articles/consumer-sentiment-dips-worries-affordability-194613828.html",
+        "https://finance.yahoo.com/technology/ai/articles/openai-train-ai-models-without-193917215.html",
+        "https://finance.yahoo.com/markets/stocks/articles/spacex-filing-gives-elon-musk-193602724.html",
+        "https://finance.yahoo.com/economy/policy/articles/expect-wednesday-federal-meeting-191841381.html",
+        "https://finance.yahoo.com/markets/commodities/articles/gold-stakes-claim-digital-rush-190816129.html",
+        "https://finance.yahoo.com/markets/commodities/articles/drewry-data-shows-import-demand-185528850.html",
+        "https://finance.yahoo.com/technology/ai/articles/sec-flags-ai-super-intelligence-185455299.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 9,
+      "failures": [],
+      "warnings": [
+        {
+          "url": "https://finance.yahoo.com/technology/ai/articles/exclusive-meta-acquires-ai-data-205220376.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/world-indices/articles/major-us-stock-indexes-fared-201458598.html",
+          "warning": "dropped tickers absent from candidates: ['CL=F', '^DJI', '^GSPC', '^IXIC', '^RUT']"
+        }
+      ],
+      "articles_skipped_old_url": 0,
+      "articles_skipped_no_company_in_title": 0,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "Yahoo Finance",
+      "start_url": "https://finance.yahoo.com/topic/earnings/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://finance.yahoo.com/topic/earnings/"
+      ],
+      "articles_opened": [
+        "https://finance.yahoo.com/markets/stocks/articles/bandwidth-band-earnings-expected-grow-130007096.html",
+        "https://finance.yahoo.com/markets/stocks/articles/strong-earnings-expectations-require-action-200936354.html",
+        "https://finance.yahoo.com/markets/stocks/articles/associated-banc-corp-asb-reports-213001609.html",
+        "https://finance.yahoo.com/markets/stocks/articles/american-express-axp-reports-q3-123002751.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-preview-supernus-pharmaceuticals-supn-130016340.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-preview-eli-lilly-lly-130026691.html",
+        "https://finance.yahoo.com/markets/stocks/articles/heres-key-metrics-tell-us-123006907.html",
+        "https://finance.yahoo.com/markets/stocks/articles/intel-vs-qualcomm-widening-gap-204516337.html",
+        "https://finance.yahoo.com/markets/stocks/articles/f5-report-q4-earnings-whats-125400114.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-flood-fed-meeting-pose-100557196.html",
+        "https://finance.yahoo.com/markets/stocks/articles/eagle-bancorp-egbn-q3-earnings-220005263.html",
+        "https://finance.yahoo.com/markets/stocks/articles/eagle-bancorp-q3-earnings-call-170506894.html",
+        "https://finance.yahoo.com/markets/stocks/articles/horizon-bancorp-hbnc-stock-price-021515031.html",
+        "https://finance.yahoo.com/markets/stocks/articles/glacier-bancorp-nyse-gbci-reports-204742897.html",
+        "https://finance.yahoo.com/markets/stocks/articles/eastern-bankshares-ebc-q3-earnings-213002606.html",
+        "https://finance.yahoo.com/markets/stocks/articles/eagle-financial-services-inc-efsi-210004205.html",
+        "https://finance.yahoo.com/markets/stocks/articles/op-bancorp-opbk-q3-earnings-210007388.html",
+        "https://finance.yahoo.com/markets/stocks/articles/csb-bancorp-csbb-stock-shrugs-091413994.html",
+        "https://finance.yahoo.com/markets/stocks/articles/analysts-estimate-d-r-horton-130022032.html",
+        "https://finance.yahoo.com/markets/stocks/articles/d-r-horton-dhi-cuts-131820657.html",
+        "https://finance.yahoo.com/markets/stocks/articles/tyler-technologies-tyl-reports-next-130017270.html",
+        "https://finance.yahoo.com/markets/stocks/articles/ttm-technologies-earnings-look-ttmi-044639779.html",
+        "https://finance.yahoo.com/markets/stocks/articles/roper-technologies-soars-9-2-171801151.html",
+        "https://finance.yahoo.com/markets/stocks/articles/snap-nyse-sna-misses-q3-110123418.html",
+        "https://finance.yahoo.com/markets/stocks/articles/snap-sna-lags-q3-earnings-104002073.html",
+        "https://finance.yahoo.com/markets/stocks/articles/graco-sinks-15-q3-miss-065012306.html",
+        "https://finance.yahoo.com/markets/stocks/articles/why-snap-sna-shares-falling-162953177.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-beat-might-change-case-221400692.html",
+        "https://finance.yahoo.com/markets/stocks/articles/rocket-companies-rkt-heads-earnings-221349921.html",
+        "https://finance.yahoo.com/markets/stocks/articles/valero-vlo-stock-price-cools-221054200.html",
+        "https://finance.yahoo.com/markets/stocks/articles/norion-bank-om-norion-stock-220928647.html",
+        "https://finance.yahoo.com/markets/stocks/articles/customers-bancorp-cubi-stock-climbs-220922488.html",
+        "https://finance.yahoo.com/markets/stocks/articles/bunge-bg-stock-may-below-220817543.html",
+        "https://finance.yahoo.com/markets/stocks/articles/lindsay-lnn-stock-price-reflects-220749661.html",
+        "https://finance.yahoo.com/markets/stocks/articles/restaurant-brands-international-qsr-could-220743008.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-beat-change-dow-dow-211609071.html",
+        "https://finance.yahoo.com/markets/stocks/articles/trico-bancshares-tcbk-stock-slides-211430276.html",
+        "https://finance.yahoo.com/markets/stocks/articles/upcoming-earnings-firstenergy-fe-changed-211315844.html",
+        "https://finance.yahoo.com/markets/stocks/articles/brandywine-realty-trust-bdn-q3-211311206.html",
+        "https://finance.yahoo.com/markets/stocks/articles/3-british-growth-stocks-least-211229667.html",
+        "https://finance.yahoo.com/markets/stocks/articles/kaiser-aluminum-kalu-stock-sinks-211031340.html",
+        "https://finance.yahoo.com/markets/stocks/articles/compared-estimates-river-city-bank-210002541.html",
+        "https://finance.yahoo.com/markets/stocks/articles/flagstar-financial-inc-q3-2026-205009464.html",
+        "https://finance.yahoo.com/markets/stocks/articles/preferred-bank-q3-2026-earnings-204510044.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-beat-could-game-changer-201828053.html",
+        "https://finance.yahoo.com/markets/stocks/articles/learn-why-bull-case-illinois-201733493.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-optimism-altering-investment-case-201659686.html",
+        "https://finance.yahoo.com/markets/stocks/articles/sherwin-williams-shw-faces-higher-201656443.html",
+        "https://finance.yahoo.com/markets/stocks/articles/boston-beer-company-sam-undervalued-201649933.html",
+        "https://finance.yahoo.com/markets/stocks/articles/customers-bancorp-cubi-undervalued-earnings-201439105.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 19,
+      "failures": [],
+      "warnings": [
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/eagle-bancorp-egbn-q3-earnings-220005263.html",
+          "warning": "dropped tickers absent from candidates: ['EGBN']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/horizon-bancorp-hbnc-stock-price-021515031.html",
+          "warning": "dropped tickers absent from candidates: ['HBNC']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/eagle-financial-services-inc-efsi-210004205.html",
+          "warning": "dropped tickers absent from candidates: ['EFSI']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/op-bancorp-opbk-q3-earnings-210007388.html",
+          "warning": "dropped tickers absent from candidates: ['OPBK']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/csb-bancorp-csbb-stock-shrugs-091413994.html",
+          "warning": "dropped tickers absent from candidates: ['CSBB']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/ttm-technologies-earnings-look-ttmi-044639779.html",
+          "warning": "dropped tickers absent from candidates: ['TTMI']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/norion-bank-om-norion-stock-220928647.html",
+          "warning": "dropped tickers absent from candidates: ['OM:NORION']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/lindsay-lnn-stock-price-reflects-220749661.html",
+          "warning": "dropped tickers absent from candidates: ['LNN']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/restaurant-brands-international-qsr-could-220743008.html",
+          "warning": "dropped tickers absent from candidates: ['QSR']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/brandywine-realty-trust-bdn-q3-211311206.html",
+          "warning": "dropped tickers absent from candidates: ['BDN']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/3-british-growth-stocks-least-211229667.html",
+          "warning": "dropped tickers absent from candidates: ['BRBY.L', 'CMCX.L', 'SAGA.L']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/kaiser-aluminum-kalu-stock-sinks-211031340.html",
+          "warning": "dropped tickers absent from candidates: ['KALU']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/compared-estimates-river-city-bank-210002541.html",
+          "warning": "dropped tickers absent from candidates: ['RCBC']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/earnings-beat-could-game-changer-201828053.html",
+          "warning": "dropped tickers absent from candidates: ['HBNC']"
+        }
+      ],
+      "articles_skipped_old_url": 0,
+      "articles_skipped_no_company_in_title": 0,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "Yahoo Finance",
+      "start_url": "https://finance.yahoo.com/topic/tech/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "page_limit",
+      "pages_visited": [
+        "https://finance.yahoo.com/topic/tech/"
+      ],
+      "articles_opened": [
+        "https://finance.yahoo.com/technology/article/meta-stock-drops-more-than-7-despite-strong-q3-results-as-ai-spending-fears-return-193128008.html",
+        "https://finance.yahoo.com/technology/article/openai-aiming-for-new-30-billion-funding-round-at-a-125-trillion-valuation-131325168.html",
+        "https://finance.yahoo.com/technology/article/spacex-wont-follow-metas-playbook-to-fund-its-ai-build-out-jpmorgan-says-125123988.html",
+        "https://finance.yahoo.com/technology/ai/article/why-teslas-5-billion-capex-cut-isnt-the-warning-sign-ai-stock-bears-think-it-is-124021981.html",
+        "https://finance.yahoo.com/technology/article/big-techs-capex-spending-looks-different-this-year-as-meta-and-tesla-save-for-later-100000383.html",
+        "https://finance.yahoo.com/technology/article/how-elon-musk-went-from-tesla-ceo-to-the-most-powerful-civilian-non-governmental-actor-in-history-100000227.html",
+        "https://finance.yahoo.com/technology/article/spacex-reportedly-wants-to-lease-space-on-80000-cell-towers-in-a-bid-to-challenge-verizon-att-and-t-mobile-145031793.html",
+        "https://finance.yahoo.com/markets/stocks/article/spacex-stock-slides-as-tech-trade-tumbles-191751177.html",
+        "https://finance.yahoo.com/technology/article/elon-musk-says-teslas-optimus-robot-needs-to-learn-like-a-toddler-135809500.html",
+        "https://finance.yahoo.com/technology/article/the-simple-reason-jpmorgan-thinks-spacex-will-triple-its-going-after-a-28-trillion-market-183620489.html",
+        "https://finance.yahoo.com/markets/article/spacex-stock-soars-to-its-best-day-in-2-months-while-space-peers-climb-out-of-a-26-hole-142710403.html",
+        "https://finance.yahoo.com/markets/article/anthropic-to-publicly-file-for-ipo-as-early-as-friday-sources-say-135343841.html",
+        "https://finance.yahoo.com/markets/article/tech-stocks-lead-market-higher-as-spacex-shares-surge-alphacheck-134723268.html",
+        "https://finance.yahoo.com/technology/article/nvidia-ceo-jensen-huang-says-data-center-builders-have-to-be-good-neighbors-132705446.html",
+        "https://finance.yahoo.com/markets/article/supermicro-stock-jumps-as-server-maker-lifts-revenue-forecast-122408188.html",
+        "https://finance.yahoo.com/technology/article/people-are-now-recognizing-nvidias-compute-has-a-great-deal-of-residual-value-ceo-jensen-huang-tells-deirdre-bosa-115435002.html",
+        "https://finance.yahoo.com/markets/stocks/article/musk-backs-spacex-tesla-merger-idea-as-both-boards-form-special-committees-113219080.html",
+        "https://finance.yahoo.com/technology/article/nvidia-reveals-plans-for-an-ai-factory-in-a-shipping-container-to-build-data-centers-in-weeks-not-months-125029004.html",
+        "https://finance.yahoo.com/markets/stocks/article/spacex-earnings-left-one-big-question-unanswered-102646710.html",
+        "https://finance.yahoo.com/technology/article/meta-and-google-are-about-to-have-a-consumer-ai-showdown-100000834.html",
+        "https://finance.yahoo.com/technology/article/meta-q3-earnings-to-test-wall-streets-stomach-for-ai-spending-184105375.html",
+        "https://finance.yahoo.com/markets/article/chip-stocks-shrug-off-a-scary-morning-but-history-says-the-shakeout-isnt-over-154222842.html",
+        "https://finance.yahoo.com/markets/article/metas-muse-ai-agent-hits-109-million-downloads-as-chatgpt-slides-25-153532560.html",
+        "https://finance.yahoo.com/markets/stocks/article/why-tesla-bull-cathie-wood-thinks-the-stock-is-headed-to-5000-121102992.html",
+        "https://finance.yahoo.com/markets/stocks/article/spacex-investors-are-very-focused-on-one-big-financial-swing-factor-140653599.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 24,
+      "failures": [],
+      "warnings": [
+        {
+          "url": "https://finance.yahoo.com/technology/ai/article/why-teslas-5-billion-capex-cut-isnt-the-warning-sign-ai-stock-bears-think-it-is-124021981.html",
+          "warning": "dropped tickers absent from candidates: ['GOOG']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/article/spacex-stock-slides-as-tech-trade-tumbles-191751177.html",
+          "warning": "dropped tickers absent from candidates: ['SPCX']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/article/spacex-earnings-left-one-big-question-unanswered-102646710.html",
+          "warning": "dropped tickers absent from candidates: ['SPCX']"
+        },
+        {
+          "url": "https://finance.yahoo.com/technology/article/meta-and-google-are-about-to-have-a-consumer-ai-showdown-100000834.html",
+          "warning": "dropped tickers absent from candidates: ['GOOG']"
+        }
+      ],
+      "articles_skipped_old_url": 0,
+      "articles_skipped_no_company_in_title": 0,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "CNBC",
+      "start_url": "https://www.cnbc.com/earnings/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://www.cnbc.com/earnings/"
+      ],
+      "articles_opened": [
+        "https://www.cnbc.com/2026/10/22/meta-stock-q3-earnings-free-cash-flow.html",
+        "https://www.cnbc.com/2026/10/22/comcast-cmcsa-earnings-q3-2026.html",
+        "https://www.cnbc.com/2026/10/22/procter-gamble-pg-q1-2027-earnings.html",
+        "https://www.cnbc.com/2026/10/21/southwest-airlines-luv-3q-2026-earnings.html",
+        "https://www.cnbc.com/2026/10/21/tesla-tsla-q3-2026-earnings-report.html",
+        "https://www.cnbc.com/2026/10/21/meta-earnings-q3-2026-live-updates.html",
+        "https://www.cnbc.com/2026/10/23/moodys-holds-steady-on-frances-credit-rating-as-country-grapples-with-turmoil-and-higher-yields.html",
+        "https://www.cnbc.com/2026/10/20/netflix-nflx-earnings-q3-2026.html",
+        "https://www.cnbc.com/2026/10/20/spacex-spcx-earnings-live-updates-q3-2026html.html",
+        "https://www.cnbc.com/2026/10/20/general-motors-gm-earnings-q3-2026.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 10,
+      "failures": [],
+      "warnings": [],
+      "articles_skipped_old_url": 12,
+      "articles_skipped_no_company_in_title": 11,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "CNBC",
+      "start_url": "https://www.cnbc.com/technology/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://www.cnbc.com/technology/"
+      ],
+      "articles_opened": [
+        "https://www.cnbc.com/2026/10/23/moodys-holds-steady-on-frances-credit-rating-as-country-grapples-with-turmoil-and-higher-yields.html",
+        "https://www.cnbc.com/2026/10/23/apple-iphone-duo-china-launch.html",
+        "https://www.cnbc.com/2026/10/23/spacex-tesla-merger-chatter-takes-center-stage-after-earnings.html",
+        "https://www.cnbc.com/2026/10/23/jensen-huang-gtc-robot-ducks-neocloud-distress.html",
+        "https://www.cnbc.com/2026/10/23/nvidia-huang-investment-kazakhstan-.html",
+        "https://www.cnbc.com/2026/10/22/meta-mark-zuckerberg-california-billionaire-tax.html",
+        "https://www.cnbc.com/2026/10/22/meta-stock-q3-earnings-free-cash-flow.html",
+        "https://www.cnbc.com/2026/10/22/nvidia-jensen-huang-neocloud-demand-capital.html",
+        "https://www.cnbc.com/2026/10/22/php-google-openai-and-amazon-cyber.html",
+        "https://www.cnbc.com/2026/10/21/meta-new-mexico-cambridge-analytica-penalty.html",
+        "https://www.cnbc.com/2026/10/21/meta-earnings-q3-2026-live-updates.html",
+        "https://www.cnbc.com/2026/10/21/tesla-tsla-q3-2026-earnings-report.html",
+        "https://www.cnbc.com/2026/10/21/intel-hits-construction-milestone-at-delayed-ohio-chip-fab-.html",
+        "https://www.cnbc.com/2026/10/21/futures-orbit-around-spacex-as-tesla-merger-talk-cheers-investors.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 14,
+      "failures": [],
+      "warnings": [],
+      "articles_skipped_old_url": 1,
+      "articles_skipped_no_company_in_title": 24,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "CNBC",
+      "start_url": "https://www.cnbc.com/investing/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://www.cnbc.com/investing/"
+      ],
+      "articles_opened": [
+        "https://www.cnbc.com/2026/10/23/moodys-holds-steady-on-frances-credit-rating-as-country-grapples-with-turmoil-and-higher-yields.html",
+        "https://www.cnbc.com/2026/10/23/apple-nvidia-market-cap-earnings.html",
+        "https://www.cnbc.com/2026/10/22/meta-platforms-beat-the-street-heres-why-analysts-are-bullish-on-the-stock.html",
+        "https://www.cnbc.com/2026/10/22/wall-street-analyst-calls-nvidia-tesla-meta-spacex.html",
+        "https://www.cnbc.com/2026/10/22/tesla-q3-2026-earnings-analysts.html",
+        "https://www.cnbc.com/2026/10/21/rick-rieder-investment-grade-bonds.html",
+        "https://www.cnbc.com/2026/10/21/morgan-stanley-western-digital-terawulf-williams.html",
+        "https://www.cnbc.com/2026/10/21/jpmorgan-says-spacex-to-triple-after-huge-third-quarter-earnings-beat-.html",
+        "https://www.cnbc.com/2026/10/21/netflix-is-sliding-after-earnings-analysts-say-buy-the-dip.html",
+        "https://www.cnbc.com/2026/10/21/wednesday-biggest-analyst-calls-like-spacex.html",
+        "https://www.cnbc.com/2026/10/20/this-data-storage-stock-should-get-a-big-boost-morgan-stanley-says.html",
+        "https://www.cnbc.com/2026/10/20/tuesday-big-wall-street-analyst-calls-like-spacex.html",
+        "https://www.cnbc.com/2026/10/20/apple-loop-capital-downgrade-iphone-sales.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 13,
+      "failures": [],
+      "warnings": [],
+      "articles_skipped_old_url": 6,
+      "articles_skipped_no_company_in_title": 21,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    }
+  ],
+  "articles": 83,
+  "cutoff_reached_all_sources": false,
+  "coverage_verified": false,
+  "model": "gpt-5.4-nano-2026-03-17",
+  "model_calls": 134,
+  "input_tokens": 192982,
+  "output_tokens": 39050
+}
