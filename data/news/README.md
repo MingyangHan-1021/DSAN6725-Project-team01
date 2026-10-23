@@ -27,6 +27,20 @@ The files contain original factual summaries and source links, not copied articl
 
 Collections are focused research inputs, not claims of complete market-wide news coverage. Preserve older dated files for reproducibility and historical evaluation instead of overwriting them.
 
+## Agent 1 production batch
+
+The local batch command collects a configured group of RSS/Atom feeds, keeps **all** articles that pass the company-name and content checks, formats and ingests them into SQLite, and optionally indexes evidence in Qdrant. It does not apply the evaluation dataset's article limit or source cap. Review feed coverage before interpreting a zero news score.
+
+```bash
+python -m tools.collect_agent1_news \
+  --feeds config/news_feeds_bing.json \
+  --output-prefix outputs/<date>-agent1 \
+  --db data/agent1.sqlite3 \
+  --qdrant-url http://127.0.0.1:6333
+```
+
+Use `--raw-input path/to/collector.jsonl` instead of `--feeds` for an offline rerun. Add `--llm-label` only when an `OPENAI_API_KEY` is configured and paid primary-ticker/event labels are wanted; the model does not produce counts or scores. Batch outputs include the validated candidate JSONL, Agent 1 TXT, and a coverage manifest. An optional labelled JSONL and model telemetry file are also written. Ingest market bars into the same database, then run `main.py rank`; its JSON and SQLite run tables contain seven daily scores and a rolling score for every configured stock.
+
 ## Unlabelled evaluation candidates
 
 `tools/news_collector.py` collects RSS/Atom metadata into JSONL without assigning

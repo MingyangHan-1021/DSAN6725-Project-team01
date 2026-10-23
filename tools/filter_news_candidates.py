@@ -146,7 +146,8 @@ def is_non_article(content: str) -> bool:
     return bool(re.search(r"\bis a (reporter|correspondent|writer|editor)\b", text))
 
 
-def filter_records(records: Iterable[dict[str, Any]], company_names: dict[str, set[str]]) \
+def filter_records(records: Iterable[dict[str, Any]], company_names: dict[str, set[str]],
+                   use_supplied_tickers: bool = False) \
         -> tuple[list[dict[str, Any]], dict[str, int]]:
     """Attach tickers and report why records were excluded."""
     kept: list[dict[str, Any]] = []
@@ -159,7 +160,16 @@ def filter_records(records: Iterable[dict[str, Any]], company_names: dict[str, s
         if is_non_article(str(record.get("CONTENT", ""))):
             stats["non_article"] += 1
             continue
-        tickers = find_tickers(record, company_names)
+        candidates = find_tickers(record, company_names)
+        if use_supplied_tickers:
+            supplied = record.get("TICKERS")
+            if not isinstance(supplied, list) or any(not isinstance(ticker, str) for ticker in supplied):
+                raise ValueError(f"record {record.get('ID', '?')}: browser TICKERS must be a string list")
+            if any(ticker not in candidates for ticker in supplied):
+                raise ValueError(f"record {record.get('ID', '?')}: browser TICKERS are absent from article text")
+            tickers = sorted(set(supplied))
+        else:
+            tickers = candidates
         if not tickers:
             stats["no_sp500_ticker"] += 1
             continue

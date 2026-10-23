@@ -2,10 +2,11 @@
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from statistics import mean
+from .daily_news import news_universe, score_daily_news
 from .models import DataError
 from .storage import articles_as_of, bars_as_of
 
-FEATURE_VERSION = "agent1-features-v3"
+FEATURE_VERSION = "agent1-features-v4-daily-news"
 
 def percentile(values: dict[str, float | None]) -> dict[str, float | None]:
     """Tied values share rank; missing values stay missing."""
@@ -80,32 +81,35 @@ def rank(db, as_of: datetime, config: dict, top_k: int = 10) -> dict:
         raise DataError("market and news weights must be nonnegative and sum to 1")
     if config["volume_baseline_bars"] < 1 or config["max_market_age_days"] < 0:
         raise DataError("volume baseline must be positive and maximum market age nonnegative")
-    window_start = as_of - timedelta(days=7)
     market = market_features(bars_as_of(db, as_of, config["timeframe"], config["session"]),
                              as_of, config["volume_baseline_bars"])
+    # Score the configured universe even when a ticker has no market bar or article.
+    daily_news = score_daily_news(db, as_of,
+        news_universe(config.get("news_universe_file", "config/sp500_tickers.txt")) + list(market), config)
+    window_start = datetime.fromisoformat(daily_news["window_start_inclusive"])
     news = news_features(articles_as_of(db, window_start, as_of))
     # A ticker needs an observed matching market bar. News-only tickers remain stored for research.
     universe = sorted(ticker for ticker, data in market.items()
                       if data["latest_close"] >= config["min_price"] and data["latest_volume"] >= config["min_volume"]
                       and datetime.fromisoformat(data["latest_bar_at"]) >= as_of - timedelta(days=config["max_market_age_days"]))
     market_fields = ("abs_1d_return", "abs_7d_move", "relative_volume", "volatility_anomaly")
-    news_fields = ("article_mentions", "source_breadth", "verified_headlines")
     normalized = {field: percentile({ticker: market[ticker][field] for ticker in universe}) for field in market_fields}
-    normalized.update({field: percentile({ticker: news.get(ticker, {}).get(field, 0) for ticker in universe}) for field in news_fields})
     ranked = []
     for ticker in universe:
         available = [normalized[field][ticker] for field in market_fields if normalized[field][ticker] is not None]
         market_score = mean(available) if available else None
-        news_score = mean(normalized[field][ticker] for field in news_fields)
+        news_score = daily_news["scores"][ticker]["news_score"]
         news_data = news.get(ticker, {"article_mentions": 0, "unique_articles": 0, "source_breadth": 0,
                                      "verified_headlines": 0, "evidence_ids": [], "coverage_records": 0,
                                      "unique_events": None})
         signals = {field: market[ticker][field] for field in market_fields}
-        signals.update({field: news_data[field] for field in news_fields})
+        signals.update({field: news_data[field] for field in ("article_mentions", "source_breadth", "verified_headlines")})
         signals["unique_articles"] = news_data["unique_articles"]
         ranked.append({"ticker": ticker, "market_score": market_score, "news_score": news_score,
                        "hotness_score": weights["market"] * (market_score or 0) + weights["news"] * news_score,
                        "main_signals": signals, "evidence_ids": news_data["evidence_ids"],
+                       "daily_news_scores": [{"date": item["date"], "score": item["score"]}
+                                             for item in daily_news["scores"][ticker]["daily"]],
                        "missing_market_features": [field for field in market_fields if market[ticker][field] is None],
                        "latest_bar_at": market[ticker]["latest_bar_at"]})
     ranked.sort(key=lambda row: (-row["hotness_score"], row["ticker"]))
@@ -113,5 +117,7 @@ def rank(db, as_of: datetime, config: dict, top_k: int = 10) -> dict:
         row["rank"] = index
     return {"as_of": as_of.isoformat(), "window_start_inclusive": window_start.isoformat(),
             "window_end_inclusive": as_of.isoformat(), "feature_version": FEATURE_VERSION,
+            "news_timezone": daily_news["timezone"], "news_dates": daily_news["dates"],
+            "news_score_universe": len(daily_news["scores"]), "news_scores": daily_news["scores"],
             "coverage_note": "Top stocks within supplied market/news data; full US-market coverage is not established.",
             "eligible_tickers": len(universe), "ranked": ranked[:top_k]}
