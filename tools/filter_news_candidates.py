@@ -24,7 +24,7 @@ GENERIC_NAMES = {
     "citizens", "consolidated edison", "copart", "dayforce", "eversource energy",
     "expeditors international", "fidelity national information services", "first solar",
     "fortive", "fortune brands innovations", "international paper", "iron mountain",
-    "live nation entertainment", "news corp", "northern trust", "principal financial",
+    "live nation entertainment", "msci", "news corp", "northern trust", "principal financial",
     "coherent", "cooper", "flex", "mosaic", "nasdaq", "news", "public storage",
     "republic services", "southern", "state street", "target",
     "tractor supply", "travelers", "united rentals", "western digital",
@@ -59,6 +59,12 @@ ALIASES: dict[str, tuple[str, ...]] = {
     "WMT": ("Walmart",),
 }
 SYMBOL_ALIASES = {"AMD", "GE", "RTX", "UPS"}
+
+# Page text that is not an article: publisher ad templates and quote pages.
+BOILERPLATE_MARKERS = (
+    "the above button links to coinbase",
+    "detailed price information for",
+)
 
 
 def normalize(text: str) -> str:
@@ -129,11 +135,13 @@ def content_repeats_title(title: str, content: str) -> bool:
 
 
 def is_non_article(content: str) -> bool:
-    """Detect author bio pages and video pages with no text."""
+    """Detect author bio pages, video pages with no text, ad templates, and quote pages."""
     text = content.strip().casefold()
     if len(text.split()) < 5:
         return True
     if re.fullmatch(r"source: .*\d+:\d+", text):
+        return True
+    if any(marker in text for marker in BOILERPLATE_MARKERS):
         return True
     return bool(re.search(r"\bis a (reporter|correspondent|writer|editor)\b", text))
 
@@ -242,6 +250,7 @@ def main(argv: list[str] | None = None) -> int:
                 "records_with_primary_ticker": sum("PRIMARY_TICKER" in row for row in selected),
                 "records_with_event_type": sum("EVENT_TYPE" in row for row in selected),
                 "title_only_content": sum(content_repeats_title(row["TITLE"], row["CONTENT"]) for row in selected),
+                "non_article": sum(is_non_article(row["CONTENT"]) for row in selected),
             },
             "coverage": {
                 "distinct_sources": len({row["SOURCE"] for row in selected}),

@@ -7,9 +7,12 @@ config/news_feeds.local.json
 data/*.sqlite3
 data/*.sqlite3-*
 outputs/
+.local/
 probe.tmp
 # Downloaded market data: each person regenerates it with scripts/fetch_market_data.py
 data/research/*
 data/model/*
 !data/research/.gitkeep
 !data/model/.gitkeep
+.env
+__pycache__/

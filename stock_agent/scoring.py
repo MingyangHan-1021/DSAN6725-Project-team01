@@ -5,7 +5,7 @@ from statistics import mean
 from .models import DataError
 from .storage import articles_as_of, bars_as_of
 
-FEATURE_VERSION = "agent1-features-v1"
+FEATURE_VERSION = "agent1-features-v3"
 
 def percentile(values: dict[str, float | None]) -> dict[str, float | None]:
     """Tied values share rank; missing values stay missing."""
@@ -13,7 +13,8 @@ def percentile(values: dict[str, float | None]) -> dict[str, float | None]:
     if not present:
         return {ticker: None for ticker in values}
     unique = sorted({value for value, _ in present})
-    return {ticker: None if value is None else (unique.index(value) / (len(unique) - 1) if len(unique) > 1 else 1.0)
+    # A constant feature does not distinguish stocks, even when its common value is positive.
+    return {ticker: None if value is None else (unique.index(value) / (len(unique) - 1) if len(unique) > 1 else 0.0)
             for ticker, value in values.items()}
 
 def market_features(rows: list[dict], as_of: datetime, baseline_bars: int) -> dict[str, dict]:
@@ -46,7 +47,8 @@ def news_features(rows: list[dict]) -> dict[str, dict]:
         grouped[row["ticker"]].append(row)
     output = {}
     for ticker, items in grouped.items():
-        # Each article appears once per ticker. URL or identical content counts as one article.
+        # Every supplied record counts as a mention, including repeated coverage from one source.
+        # Keep a separate deduplicated count so callers can inspect repeated coverage.
         unique: list[dict] = []
         urls: set[str] = set()
         hashes: set[str] = set()
@@ -57,10 +59,11 @@ def news_features(rows: list[dict]) -> dict[str, dict]:
             hashes.add(item["content_hash"])
             unique.append(item)
         output[ticker] = {
+            "article_mentions": len(items),
             "unique_articles": len(unique),
             "source_breadth": len({item["source"] for item in items}),
-            "verified_headlines": sum(item["is_headline"] == "true" for item in unique),
-            "evidence_ids": [item["article_id"] for item in unique],
+            "verified_headlines": sum(item["is_headline"] == "true" for item in items),
+            "evidence_ids": [item["article_id"] for item in items],
             "coverage_records": len(items),
             "unique_events": None,  # Article deduplication does not establish event identity.
         }
@@ -86,7 +89,7 @@ def rank(db, as_of: datetime, config: dict, top_k: int = 10) -> dict:
                       if data["latest_close"] >= config["min_price"] and data["latest_volume"] >= config["min_volume"]
                       and datetime.fromisoformat(data["latest_bar_at"]) >= as_of - timedelta(days=config["max_market_age_days"]))
     market_fields = ("abs_1d_return", "abs_7d_move", "relative_volume", "volatility_anomaly")
-    news_fields = ("unique_articles", "source_breadth", "verified_headlines")
+    news_fields = ("article_mentions", "source_breadth", "verified_headlines")
     normalized = {field: percentile({ticker: market[ticker][field] for ticker in universe}) for field in market_fields}
     normalized.update({field: percentile({ticker: news.get(ticker, {}).get(field, 0) for ticker in universe}) for field in news_fields})
     ranked = []
@@ -94,11 +97,12 @@ def rank(db, as_of: datetime, config: dict, top_k: int = 10) -> dict:
         available = [normalized[field][ticker] for field in market_fields if normalized[field][ticker] is not None]
         market_score = mean(available) if available else None
         news_score = mean(normalized[field][ticker] for field in news_fields)
-        news_data = news.get(ticker, {"unique_articles": 0, "source_breadth": 0,
+        news_data = news.get(ticker, {"article_mentions": 0, "unique_articles": 0, "source_breadth": 0,
                                      "verified_headlines": 0, "evidence_ids": [], "coverage_records": 0,
                                      "unique_events": None})
         signals = {field: market[ticker][field] for field in market_fields}
         signals.update({field: news_data[field] for field in news_fields})
+        signals["unique_articles"] = news_data["unique_articles"]
         ranked.append({"ticker": ticker, "market_score": market_score, "news_score": news_score,
                        "hotness_score": weights["market"] * (market_score or 0) + weights["news"] * news_score,
                        "main_signals": signals, "evidence_ids": news_data["evidence_ids"],

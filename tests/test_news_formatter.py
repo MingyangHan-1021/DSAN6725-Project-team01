@@ -1,4 +1,5 @@
 """Tests for the provider-independent news formatting boundary."""
+from contextlib import closing
 import json
 from pathlib import Path
 import tempfile
@@ -45,7 +46,7 @@ class NewsFormatterTests(unittest.TestCase):
         article = parse_news(output, self.retrieved)[0]
         self.assertEqual(article.primary_ticker, "DELL")
         self.assertEqual(article.event_type, "rating")
-        with connect(self.root / "agent1.sqlite3") as db:
+        with closing(connect(self.root / "agent1.sqlite3")) as db, db:
             ingest(db, [article], [], self.retrieved)
             stored = db.execute(
                 "SELECT primary_ticker,event_type FROM articles WHERE article_id=?",
@@ -95,7 +96,7 @@ class NewsFormatterTests(unittest.TestCase):
         legacy_output.write_text(legacy_text, encoding="utf-8")
         legacy = parse_news(legacy_output, self.retrieved)[0]
 
-        with connect(self.root / "upgrade.sqlite3") as db:
+        with closing(connect(self.root / "upgrade.sqlite3")) as db, db:
             ingest(db, [legacy], [], self.retrieved)
             ingest(db, [classified], [], self.retrieved)
             stored = db.execute(
