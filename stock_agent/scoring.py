@@ -6,7 +6,7 @@ from .daily_news import news_universe, score_daily_news
 from .models import DataError
 from .storage import articles_as_of, bars_as_of
 
-FEATURE_VERSION = "agent1-features-v4-daily-news"
+FEATURE_VERSION = "agent1-features-v5-news-percentile"
 
 def percentile(values: dict[str, float | None]) -> dict[str, float | None]:
     """Tied values share rank; missing values stay missing."""
@@ -94,11 +94,16 @@ def rank(db, as_of: datetime, config: dict, top_k: int = 10) -> dict:
                       and datetime.fromisoformat(data["latest_bar_at"]) >= as_of - timedelta(days=config["max_market_age_days"]))
     market_fields = ("abs_1d_return", "abs_7d_move", "relative_volume", "volatility_anomaly")
     normalized = {field: percentile({ticker: market[ticker][field] for ticker in universe}) for field in market_fields}
+    # Put news on the same 0-1 cross-sectional scale as the market score. The raw 7-day
+    # average is compressed (days without collection score 0), which let market signals
+    # decide the ranking almost alone. Tickers without news keep 0.
+    raw_news = {ticker: daily_news["scores"][ticker]["news_score"] for ticker in universe}
+    news_normalized = percentile(raw_news)
     ranked = []
     for ticker in universe:
         available = [normalized[field][ticker] for field in market_fields if normalized[field][ticker] is not None]
         market_score = mean(available) if available else None
-        news_score = daily_news["scores"][ticker]["news_score"]
+        news_score = news_normalized[ticker] or 0.0
         news_data = news.get(ticker, {"article_mentions": 0, "unique_articles": 0, "source_breadth": 0,
                                      "verified_headlines": 0, "evidence_ids": [], "coverage_records": 0,
                                      "unique_events": None})
@@ -106,6 +111,7 @@ def rank(db, as_of: datetime, config: dict, top_k: int = 10) -> dict:
         signals.update({field: news_data[field] for field in ("article_mentions", "source_breadth", "verified_headlines")})
         signals["unique_articles"] = news_data["unique_articles"]
         ranked.append({"ticker": ticker, "market_score": market_score, "news_score": news_score,
+                       "raw_news_score": raw_news[ticker],
                        "hotness_score": weights["market"] * (market_score or 0) + weights["news"] * news_score,
                        "main_signals": signals, "evidence_ids": news_data["evidence_ids"],
                        "daily_news_scores": [{"date": item["date"], "score": item["score"]}

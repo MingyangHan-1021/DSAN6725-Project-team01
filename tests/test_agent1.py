@@ -109,9 +109,38 @@ class Agent1Tests(unittest.TestCase):
         self.db.commit()
         output = rank(self.db, AS_OF, CONFIG)
         self.assertTrue(all(row["main_signals"]["verified_headlines"] == 0 for row in output["ranked"]))
-        self.assertAlmostEqual(output["news_scores"]["ALDR"]["news_score"], (2 / 3) / 7)
-        self.assertAlmostEqual(output["news_scores"]["BRCH"]["news_score"], (2 / 3) / 7)
+        # Headlines carry zero weight (browser collection cannot observe them), so each ticker's
+        # one active day scores 1.0 on mentions and breadth, averaged over seven days.
+        self.assertAlmostEqual(output["news_scores"]["ALDR"]["news_score"], 1 / 7)
+        self.assertAlmostEqual(output["news_scores"]["BRCH"]["news_score"], 1 / 7)
         self.assertEqual(output["news_scores"]["AAPL"]["news_score"], 0.0)
+        # Equal raw news scores do not distinguish stocks after percentile normalization.
+        self.assertTrue(all(row["news_score"] == 0.0 for row in output["ranked"]))
+
+    def test_news_score_is_cross_sectional_percentile(self):
+        self.populate()
+        day = AS_OF - timedelta(days=3)
+        # One extra synthetic ALDR article on a day with no other coverage raises its raw score.
+        self.db.execute("""INSERT INTO articles (
+            article_id,title,source,url,published_at,retrieved_at,available_at,is_headline,
+            content,raw_text,content_hash,canonical_key
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+            ("EXTRA", "Synthetic extra", "Synthetic Wire", "https://example.invalid/extra",
+             day.isoformat(), RETRIEVED.astimezone(day.tzinfo).isoformat(),
+             RETRIEVED.astimezone(day.tzinfo).isoformat(), "false", "Synthetic", "Synthetic",
+             "extra-hash", "extra-key"))
+        self.db.execute("INSERT INTO article_tickers VALUES (?,?)", ("EXTRA", "ALDR"))
+        self.db.commit()
+        output = rank(self.db, AS_OF, CONFIG)
+        rows = {row["ticker"]: row for row in output["ranked"]}
+        self.assertGreater(rows["ALDR"]["raw_news_score"], rows["BRCH"]["raw_news_score"])
+        # News uses the same 0-1 cross-sectional scale as the market score.
+        self.assertEqual(rows["ALDR"]["news_score"], 1.0)
+        self.assertEqual(rows["BRCH"]["news_score"], 0.0)
+        for ticker, row in rows.items():
+            self.assertEqual(row["raw_news_score"], output["news_scores"][ticker]["news_score"])
+            self.assertAlmostEqual(row["hotness_score"], CONFIG["weights"]["market"] * row["market_score"]
+                                   + CONFIG["weights"]["news"] * row["news_score"])
 
     def test_daily_news_scores_cover_empty_days_and_all_universe_tickers(self):
         self.populate()
