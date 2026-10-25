@@ -1,4 +1,4 @@
-"""Convert classified news JSONL into Agent 1's strict TXT input format.
+"""Convert collected or classified news JSONL into Agent 1's TXT input format.
 
 This tool is deliberately independent of any news or LLM provider. A collector or
 LLM can write JSONL, while this module validates the agreed contract and produces
@@ -19,7 +19,8 @@ FIELDS = (
     "ID", "TITLE", "SOURCE", "URL", "PUBLISHED_AT", "TICKERS",
     "PRIMARY_TICKER", "EVENT_TYPE", "IS_HEADLINE", "CONTENT",
 )
-REQUIRED = frozenset(FIELDS) - {"IS_HEADLINE"}
+# Classification is optional for Agent 1; ticker mentions drive news scoring.
+REQUIRED = frozenset(FIELDS) - {"PRIMARY_TICKER", "EVENT_TYPE", "IS_HEADLINE"}
 RESERVED_LINES = frozenset({"=== ARTICLE ===", "=== END ==="})
 OPTIONAL = frozenset({"RETRIEVED_AT"})
 
@@ -55,12 +56,18 @@ def render_record(record: dict[str, Any], line_number: int) -> str:
     published_at = _nonempty_string(record, "PUBLISHED_AT", line_number)
     timestamp(published_at, f"JSONL line {line_number} PUBLISHED_AT")
     tickers = _tickers(record, line_number)
-    primary = ticker_symbol(_nonempty_string(record, "PRIMARY_TICKER", line_number).replace(".", "-"))
-    if primary not in tickers:
-        raise DataError(f"JSONL line {line_number}: PRIMARY_TICKER must also appear in TICKERS")
-    event_type = _nonempty_string(record, "EVENT_TYPE", line_number)
-    if event_type not in EVENT_TYPES:
-        raise DataError(f"JSONL line {line_number}: unsupported EVENT_TYPE {event_type!r}")
+    # A classifier may enrich a record later, but partial classification is invalid.
+    has_primary = "PRIMARY_TICKER" in record
+    has_event = "EVENT_TYPE" in record
+    if has_primary != has_event:
+        raise DataError(f"JSONL line {line_number}: PRIMARY_TICKER and EVENT_TYPE must be supplied together")
+    if has_primary:
+        primary = ticker_symbol(_nonempty_string(record, "PRIMARY_TICKER", line_number).replace(".", "-"))
+        if primary not in tickers:
+            raise DataError(f"JSONL line {line_number}: PRIMARY_TICKER must also appear in TICKERS")
+        event_type = _nonempty_string(record, "EVENT_TYPE", line_number)
+        if event_type not in EVENT_TYPES:
+            raise DataError(f"JSONL line {line_number}: unsupported EVENT_TYPE {event_type!r}")
     headline = record.get("IS_HEADLINE", "unknown")
     if headline not in ("true", "false", "unknown"):
         raise DataError(f"JSONL line {line_number}: invalid IS_HEADLINE {headline!r}")
@@ -68,7 +75,7 @@ def render_record(record: dict[str, Any], line_number: int) -> str:
     if any(line.strip() in RESERVED_LINES for line in content.splitlines()):
         raise DataError(f"JSONL line {line_number}: CONTENT contains a reserved record marker")
 
-    return "\n".join((
+    lines = [
         "=== ARTICLE ===",
         f"ID: {article_id}",
         f"TITLE: {title}",
@@ -76,13 +83,16 @@ def render_record(record: dict[str, Any], line_number: int) -> str:
         f"URL: {url}",
         f"PUBLISHED_AT: {published_at}",
         f"TICKERS: {', '.join(tickers)}",
-        f"PRIMARY_TICKER: {primary}",
-        f"EVENT_TYPE: {event_type}",
+    ]
+    if has_primary:
+        lines.extend((f"PRIMARY_TICKER: {primary}", f"EVENT_TYPE: {event_type}"))
+    lines.extend((
         f"IS_HEADLINE: {headline}",
         "CONTENT:",
         content,
         "=== END ===",
     ))
+    return "\n".join(lines)
 
 
 def format_jsonl(source: str | Path, output: str | Path, retrieved_at: datetime,
@@ -121,8 +131,8 @@ def format_jsonl(source: str | Path, output: str | Path, retrieved_at: datetime,
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate classified news JSONL and write Agent 1 TXT")
-    parser.add_argument("--input", required=True, help="classified JSONL input")
+    parser = argparse.ArgumentParser(description="Validate collected or classified news JSONL and write Agent 1 TXT")
+    parser.add_argument("--input", required=True, help="news JSONL input")
     parser.add_argument("--output", required=True, help="Agent 1 news TXT output")
     parser.add_argument("--retrieved-at", required=True, help="actual retrieval time in ISO 8601 format")
     parser.add_argument("--overwrite", action="store_true")

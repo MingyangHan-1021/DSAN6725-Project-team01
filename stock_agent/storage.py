@@ -29,6 +29,16 @@ CREATE TABLE IF NOT EXISTS rank_runs (
  run_id TEXT PRIMARY KEY, as_of TEXT NOT NULL, created_at TEXT NOT NULL,
  config_json TEXT NOT NULL, output_json TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS daily_news_scores (
+ run_id TEXT NOT NULL REFERENCES rank_runs(run_id), news_date TEXT NOT NULL,
+ ticker TEXT NOT NULL, article_mentions INTEGER NOT NULL, source_breadth INTEGER NOT NULL,
+ verified_headlines INTEGER NOT NULL, score REAL NOT NULL,
+ PRIMARY KEY(run_id,news_date,ticker)
+);
+CREATE TABLE IF NOT EXISTS rolling_news_scores (
+ run_id TEXT NOT NULL REFERENCES rank_runs(run_id), ticker TEXT NOT NULL,
+ score REAL NOT NULL, PRIMARY KEY(run_id,ticker)
+);
 CREATE INDEX IF NOT EXISTS articles_available ON articles(available_at,published_at);
 CREATE INDEX IF NOT EXISTS bars_time ON bars(timestamp,timeframe,session);
 """
@@ -136,3 +146,11 @@ def save_run(db: sqlite3.Connection, run_id: str, as_of: datetime, created_at: d
     with db:
         db.execute("INSERT INTO rank_runs VALUES (?,?,?,?,?)", (run_id, as_of.isoformat(),
                    created_at.isoformat(), json.dumps(config, sort_keys=True), json.dumps(output, sort_keys=True)))
+        # Keep scores queryable in SQLite as well as in the immutable run JSON.
+        for ticker, result in output.get("news_scores", {}).items():
+            db.execute("INSERT INTO rolling_news_scores VALUES (?,?,?)",
+                       (run_id, ticker, result["news_score"]))
+            db.executemany("INSERT INTO daily_news_scores VALUES (?,?,?,?,?,?,?)",
+                ((run_id, day["date"], ticker, day["article_mentions"],
+                  day["source_breadth"], day["verified_headlines"], day["score"])
+                 for day in result["daily"]))

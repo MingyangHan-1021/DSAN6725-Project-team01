@@ -1,0 +1,251 @@
+{
+  "method": "llm_assisted_browser",
+  "prompt_version": "browser-news-v2",
+  "run_at": "2026-10-23T22:25:42.054872+00:00",
+  "cutoff": "2026-10-20T00:00:00-04:00",
+  "sources": [
+    {
+      "source": "Yahoo Finance",
+      "start_url": "https://finance.yahoo.com/topic/stock-market-news/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://finance.yahoo.com/topic/stock-market-news/"
+      ],
+      "articles_opened": [
+        "https://finance.yahoo.com/markets/stocks/articles/bloom-energy-sinks-9-pre-170716762.html",
+        "https://finance.yahoo.com/markets/stocks/articles/why-micron-stock-dropped-thursday-224901051.html",
+        "https://finance.yahoo.com/markets/article/sk-hynix-pulls-a-150-billion-ipo-as-its-own-record-us-listing-sits-underwater-134006966.html",
+        "https://finance.yahoo.com/technology/ai/articles/dan-ives-calls-ai-sell-135518486.html",
+        "https://finance.yahoo.com/markets/stocks/articles/zacks-investment-ideas-feature-highlights-084900603.html",
+        "https://finance.yahoo.com/markets/stocks/articles/chip-stocks-tumble-crushing-investor-131156176.html",
+        "https://finance.yahoo.com/technology/ai/articles/tech-stocks-fall-nvidia-boss-152634625.html",
+        "https://finance.yahoo.com/markets/article/chip-stocks-fall-as-equipment-maker-lam-research-cites-supply-chain-constraints-130648719.html",
+        "https://finance.yahoo.com/markets/stocks/articles/treasuries-ai-shows-sharp-shift-031902657.html",
+        "https://finance.yahoo.com/markets/articles/trading-day-maximum-pain-210405186.html",
+        "https://finance.yahoo.com/markets/stocks/articles/bond-market-sending-warning-stocks-144300647.html",
+        "https://finance.yahoo.com/markets/articles/another-horrible-day-markets-usual-100804490.html",
+        "https://finance.yahoo.com/technology/ai/articles/ai-boom-just-sent-warning-182200273.html",
+        "https://finance.yahoo.com/technology/ai/articles/blackstone-bet-chips-drove-debt-111500562.html",
+        "https://finance.yahoo.com/technology/ai/articles/meta-ai-spending-spree-investors-140500568.html",
+        "https://finance.yahoo.com/markets/stocks/articles/private-credit-group-says-market-143133497.html",
+        "https://finance.yahoo.com/markets/article/a-cyclical-downturn-is-inevitable-in-an-ai-crash-strategist-dario-perkins-170539090.html",
+        "https://finance.yahoo.com/technology/ai/articles/ai-trade-gets-reappraisal-111505413.html",
+        "https://finance.yahoo.com/markets/currencies/articles/ai-debt-fears-leads-investors-175721171.html",
+        "https://finance.yahoo.com/technology/ai/articles/softbank-market-value-poised-halve-054039247.html",
+        "https://finance.yahoo.com/markets/stocks/articles/chinese-stocks-baba-jd-pdd-180721875.html",
+        "https://finance.yahoo.com/markets/article/meta-and-chip-stocks-decline-as-ai-trade-comes-under-pressure-alphacheck-140107733.html",
+        "https://finance.yahoo.com/markets/stocks/articles/hedge-fund-returns-worsen-week-090101889.html",
+        "https://finance.yahoo.com/markets/stocks/articles/tech-stocks-crashing-don-t-215520468.html",
+        "https://finance.yahoo.com/markets/stocks/articles/asian-shares-slip-sharp-drops-035430006.html",
+        "https://finance.yahoo.com/markets/stocks/articles/nasdaq-futures-slide-premarket-ai-111659890.html",
+        "https://finance.yahoo.com/markets/stocks/articles/equities-mostly-lower-intraday-oil-181037506.html",
+        "https://finance.yahoo.com/markets/world-indices/articles/asian-stocks-back-retreat-tech-024129180.html",
+        "https://finance.yahoo.com/markets/stocks/articles/dow-p-500-nasdaq-futures-031110870.html",
+        "https://finance.yahoo.com/technology/ai/article/why-teslas-5-billion-capex-cut-isnt-the-warning-sign-ai-stock-bears-think-it-is-124021981.html",
+        "https://finance.yahoo.com/markets/stocks/articles/stocks-fall-sharply-risk-off-154220252.html",
+        "https://finance.yahoo.com/markets/stocks/articles/5-things-know-stock-market-121328481.html",
+        "https://finance.yahoo.com/markets/stocks/articles/morning-bid-rattled-oil-tech-104013645.html",
+        "https://finance.yahoo.com/markets/stocks/articles/stock-market-news-oct-23-081700850.html",
+        "https://finance.yahoo.com/markets/stocks/articles/stocks-fall-pre-bell-traders-114307021.html",
+        "https://finance.yahoo.com/markets/articles/tech-selloff-relents-oil-five-103308077.html",
+        "https://finance.yahoo.com/markets/stocks/articles/earnings-flood-fed-meeting-pose-100557196.html",
+        "https://finance.yahoo.com/markets/stocks/articles/wall-st-set-open-lower-130848087.html",
+        "https://finance.yahoo.com/technology/ai/articles/sec-flags-ai-super-intelligence-185455299.html",
+        "https://finance.yahoo.com/markets/article/the-ai-sell-off-is-crushing-stocks-of-companies-leading-the-data-center-build-out-175206076.html",
+        "https://finance.yahoo.com/markets/world-indices/articles/stoxx-600-extends-fall-kering-073024331.html",
+        "https://finance.yahoo.com/markets/stocks/articles/meta-stock-under-pressure-ai-160908968.html",
+        "https://finance.yahoo.com/markets/stocks/articles/memory-storage-stocks-rebound-western-155816327.html",
+        "https://finance.yahoo.com/technology/article/spacex-ceo-elon-musk-is-one-of-one-will-the-market-give-anthropics-dario-amodei-the-same-leeway-155650970.html",
+        "https://finance.yahoo.com/markets/stocks/articles/stocks-undercut-oil-prices-continued-154334535.html",
+        "https://finance.yahoo.com/markets/stocks/articles/dear-amazon-stock-fans-mark-152556112.html",
+        "https://finance.yahoo.com/markets/stocks/articles/stock-hot-52-week-highs-152502249.html",
+        "https://finance.yahoo.com/markets/stocks/articles/nvidia-stock-break-anthropic-ipo-144715188.html",
+        "https://finance.yahoo.com/markets/article/apple-is-taking-wall-streets-top-spot-back-from-nvidia--for-the-fifth-time-142810503.html",
+        "https://finance.yahoo.com/markets/stocks/articles/4-billion-reason-another-look-141834277.html",
+        "https://finance.yahoo.com/markets/stocks/articles/stocks-see-continued-downward-pressure-141235490.html",
+        "https://finance.yahoo.com/markets/stocks/articles/spacex-talks-send-cell-tower-135730233.html",
+        "https://finance.yahoo.com/markets/stocks/articles/spacex-initiation-apple-downgrade-among-133025602.html",
+        "https://finance.yahoo.com/markets/stocks/article/moderna-stock-extends-losses-as-investors-digest-melanoma-vaccine-trial-data-203618700.html",
+        "https://finance.yahoo.com/markets/article/tech-extends-decline-10-year-treasury-holds-below-5-alphacheck-134224473.html",
+        "https://finance.yahoo.com/markets/stocks/articles/ahead-verizon-earnings-heres-barchart-133339188.html",
+        "https://finance.yahoo.com/markets/stocks/articles/hoka-ugg-shoes-owner-deckers-130632984.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 45,
+      "failures": [],
+      "warnings": [
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/chip-stocks-tumble-crushing-investor-131156176.html",
+          "warning": "dropped tickers absent from candidates: ['SOXX']"
+        },
+        {
+          "url": "https://finance.yahoo.com/technology/ai/articles/tech-stocks-fall-nvidia-boss-152634625.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/article/chip-stocks-fall-as-equipment-maker-lam-research-cites-supply-chain-constraints-130648719.html",
+          "warning": "dropped tickers absent from candidates: ['ASML']"
+        },
+        {
+          "url": "https://finance.yahoo.com/technology/ai/articles/meta-ai-spending-spree-investors-140500568.html",
+          "warning": "dropped tickers absent from candidates: ['GOOG']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/tech-stocks-crashing-don-t-215520468.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/technology/ai/article/why-teslas-5-billion-capex-cut-isnt-the-warning-sign-ai-stock-bears-think-it-is-124021981.html",
+          "warning": "dropped tickers absent from candidates: ['GOOG']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-fall-sharply-risk-off-154220252.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-things-know-stock-market-121328481.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/articles/tech-selloff-relents-oil-five-103308077.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/memory-storage-stocks-rebound-western-155816327.html",
+          "warning": "dropped tickers absent from candidates: ['DRAM', 'SOXX', 'WDC']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/stock-hot-52-week-highs-152502249.html",
+          "warning": "dropped tickers absent from candidates: ['FTRE']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/nvidia-stock-break-anthropic-ipo-144715188.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/article/apple-is-taking-wall-streets-top-spot-back-from-nvidia--for-the-fifth-time-142810503.html",
+          "warning": "dropped tickers absent from candidates: ['GOOG']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/4-billion-reason-another-look-141834277.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/spacex-talks-send-cell-tower-135730233.html",
+          "warning": "dropped tickers absent from candidates: ['SPCX']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/spacex-talks-send-cell-tower-135730233.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/article/moderna-stock-extends-losses-as-investors-digest-melanoma-vaccine-trial-data-203618700.html",
+          "warning": "dropped tickers absent from candidates: ['MRK']"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/ahead-verizon-earnings-heres-barchart-133339188.html",
+          "warning": "publisher not verified; used source name"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/hoka-ugg-shoes-owner-deckers-130632984.html",
+          "warning": "dropped tickers absent from candidates: ['DECK']"
+        }
+      ],
+      "articles_skipped_old_url": 0,
+      "articles_skipped_no_company_in_title": 0,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "CNBC",
+      "start_url": "https://www.cnbc.com/markets/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://www.cnbc.com/markets/"
+      ],
+      "articles_opened": [
+        "https://www.cnbc.com/2026/10/23/moodys-holds-steady-on-frances-credit-rating-as-country-grapples-with-turmoil-and-higher-yields.html",
+        "https://www.cnbc.com/2026/10/23/nvidia-huang-investment-kazakhstan-.html",
+        "https://www.cnbc.com/2026/10/23/apple-nvidia-market-cap-earnings.html",
+        "https://www.cnbc.com/2026/10/23/stocks-making-the-biggest-moves-midday-cvx-crwd-axp-skhy-t.html",
+        "https://www.cnbc.com/2026/10/23/stocks-making-the-biggest-moves-premarket-att-spacex-moderna-deckers-bloom-energy-and-more.html",
+        "https://www.cnbc.com/2026/10/22/stocks-making-the-biggest-moves-in-after-hours-wdc-be-deck.html",
+        "https://www.cnbc.com/2026/10/22/stocks-making-the-biggest-moves-premarket-tsla-meta-avex-spot.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 7,
+      "failures": [],
+      "warnings": [],
+      "articles_skipped_old_url": 24,
+      "articles_skipped_no_company_in_title": 12,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "24/7 Wall St.",
+      "start_url": "https://247wallst.com/investing/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://247wallst.com/investing/"
+      ],
+      "articles_opened": [
+        "https://247wallst.com/investing/2026/10/23/jim-cramer-says-reinvesting-dividends-is-where-some-big-money-can-be-made-is-he-right/",
+        "https://247wallst.com/investing/2026/10/23/aep-and-xcel-energy-face-surging-power-demand-which-dividend-is-safer/",
+        "https://247wallst.com/investing/2026/10/23/abbvies-dividend-survived-humiras-patent-cliff-will-merck-and-amgens/",
+        "https://247wallst.com/investing/2026/10/23/amazon-survived-a-50-crash-heres-what-a-1000-investment-became/",
+        "https://247wallst.com/investing/2026/10/23/netflix-is-now-down-29-this-year-is-nflx-stock-hopeless-or-ready-for-a-rebound/",
+        "https://247wallst.com/investing/2026/10/23/apple-is-up-28-this-year-take-profits-or-hold-on-for-the-ride/",
+        "https://247wallst.com/investing/2026/10/23/joby-just-dropped-27-in-a-month-did-joby-stock-just-find-a-bottom/",
+        "https://247wallst.com/personal-finance/2026/10/23/wes-moss-says-1-million-in-the-sp-500-pays-just-12000-a-year-in-dividends-heres-his-fix/"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 5,
+      "failures": [],
+      "warnings": [
+        {
+          "url": "https://247wallst.com/investing/2026/10/23/joby-just-dropped-27-in-a-month-did-joby-stock-just-find-a-bottom/",
+          "warning": "dropped tickers absent from candidates: ['ACHR', 'ARKQ', 'EH', 'JOBY', 'SPY']"
+        }
+      ],
+      "articles_skipped_old_url": 0,
+      "articles_skipped_no_company_in_title": 0,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    },
+    {
+      "source": "PR Newswire",
+      "start_url": "https://www.prnewswire.com/news-releases/news-releases-list/",
+      "cutoff": "2026-10-20T00:00:00-04:00",
+      "cutoff_reached": false,
+      "stop_reason": "no_next_page",
+      "pages_visited": [
+        "https://www.prnewswire.com/news-releases/news-releases-list/"
+      ],
+      "articles_opened": [
+        "https://www.prnewswire.com/news-releases/quest-diagnostics-data-breach-investigation-edelson-lechtzin-llp-probes-class-action-claims-after-unauthorized-access-to-patient-records-302918491.html",
+        "https://www.prnewswire.com/news-releases/amy-johnson-appointed-president-of-gdit-302918411.html"
+      ],
+      "articles_skipped_known": [],
+      "articles_accepted": 2,
+      "failures": [],
+      "warnings": [],
+      "articles_skipped_old_url": 0,
+      "articles_skipped_no_company_in_title": 23,
+      "coverage_status": "incomplete",
+      "note": "Browser link selection is model-assisted; cutoff reached does not prove exhaustive coverage."
+    }
+  ],
+  "articles": 59,
+  "cutoff_reached_all_sources": false,
+  "coverage_verified": false,
+  "model": "gpt-5.4-nano-2026-03-17",
+  "model_calls": 78,
+  "input_tokens": 115148,
+  "output_tokens": 23178
+}

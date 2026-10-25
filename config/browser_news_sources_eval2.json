@@ -1,0 +1,80 @@
+[
+  {
+    "source": "Yahoo Finance",
+    "start_url": "https://finance.yahoo.com/topic/latest-news/",
+    "allowed_hosts": [
+      "finance.yahoo.com"
+    ],
+    "article_url_patterns": [
+      "^https://finance\\.yahoo\\.com/(markets|technology|news|economy|sectors)/([a-z-]+/)?articles?/[^/?#]+-\\d+\\.html"
+    ],
+    "max_pages": 1,
+    "max_articles": 60,
+    "use_page_publisher": true
+  },
+  {
+    "source": "Yahoo Finance",
+    "start_url": "https://finance.yahoo.com/topic/earnings/",
+    "allowed_hosts": [
+      "finance.yahoo.com"
+    ],
+    "article_url_patterns": [
+      "^https://finance\\.yahoo\\.com/(markets|technology|news|economy|sectors)/([a-z-]+/)?articles?/[^/?#]+-\\d+\\.html"
+    ],
+    "max_pages": 1,
+    "max_articles": 60,
+    "use_page_publisher": true
+  },
+  {
+    "source": "Yahoo Finance",
+    "start_url": "https://finance.yahoo.com/topic/tech/",
+    "allowed_hosts": [
+      "finance.yahoo.com"
+    ],
+    "article_url_patterns": [
+      "^https://finance\\.yahoo\\.com/(markets|technology|news|economy|sectors)/([a-z-]+/)?articles?/[^/?#]+-\\d+\\.html"
+    ],
+    "max_pages": 1,
+    "max_articles": 60,
+    "use_page_publisher": true
+  },
+  {
+    "source": "CNBC",
+    "start_url": "https://www.cnbc.com/earnings/",
+    "allowed_hosts": [
+      "www.cnbc.com"
+    ],
+    "article_url_patterns": [
+      "^https://www\\.cnbc\\.com/20\\d\\d/\\d\\d/\\d\\d/[^/?#]+\\.html"
+    ],
+    "max_pages": 1,
+    "max_articles": 40,
+    "title_must_name_company": true
+  },
+  {
+    "source": "CNBC",
+    "start_url": "https://www.cnbc.com/technology/",
+    "allowed_hosts": [
+      "www.cnbc.com"
+    ],
+    "article_url_patterns": [
+      "^https://www\\.cnbc\\.com/20\\d\\d/\\d\\d/\\d\\d/[^/?#]+\\.html"
+    ],
+    "max_pages": 1,
+    "max_articles": 40,
+    "title_must_name_company": true
+  },
+  {
+    "source": "CNBC",
+    "start_url": "https://www.cnbc.com/investing/",
+    "allowed_hosts": [
+      "www.cnbc.com"
+    ],
+    "article_url_patterns": [
+      "^https://www\\.cnbc\\.com/20\\d\\d/\\d\\d/\\d\\d/[^/?#]+\\.html"
+    ],
+    "max_pages": 1,
+    "max_articles": 40,
+    "title_must_name_company": true
+  }
+]
